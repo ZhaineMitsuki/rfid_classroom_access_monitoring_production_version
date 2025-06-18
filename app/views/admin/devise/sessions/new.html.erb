@@ -161,18 +161,18 @@
         const eyeIcon = document.getElementById('eyeIcon');
 
         if (togglePassword && eyeIcon && passwordInput) {
-            togglePassword.addEventListener('click', function () {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
                 // Toggle eye icon with smooth transition
-                if (type === 'password') {
-                    eyeIcon.classList.remove('bx-hide');
-                    eyeIcon.classList.add('bx-show');
+            if (type === 'password') {
+                eyeIcon.classList.remove('bx-hide');
+                eyeIcon.classList.add('bx-show');
                     togglePassword.setAttribute('title', 'Show password');
-                } else {
-                    eyeIcon.classList.remove('bx-show');
-                    eyeIcon.classList.add('bx-hide');
+            } else {
+                eyeIcon.classList.remove('bx-show');
+                eyeIcon.classList.add('bx-hide');
                     togglePassword.setAttribute('title', 'Hide password');
                 }
                 
