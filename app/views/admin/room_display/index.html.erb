@@ -1,0 +1,340 @@
+<%= stylesheet_link_tag "room_display.css", "data-turbo-track": "reload" %>
+
+<% if notice %>
+  <div class="alert alert-success shadow-sm border-0 alert-dismissible fade show mb-4" role="alert">
+    <%= notice %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% end %>
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Room Status Dashboard</h2>
+    <button class="btn btn-outline-primary" onclick="toggleFullscreen()" title="Toggle Fullscreen">
+      <i class='bx bx-fullscreen'></i>
+    </button>
+  </div>
+
+  <!-- Search and Filters Section -->
+  <div class="card shadow-sm border-0 rounded-3 mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+
+        <div class="col-md-4">
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0">
+              <i class='bx bx-search'></i>
+            </span>
+            <input type="text" id="room-search" class="form-control border-start-0" placeholder="Search rooms...">
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="btn-group w-100" role="group" aria-label="View mode">
+            <input type="radio" class="btn-check" name="viewMode" id="galleryMode" checked>
+            <label class="btn btn-outline-secondary" for="galleryMode">
+              <i class='bx bx-grid-alt me-1'></i> Gallery
+            </label>
+
+            <input type="radio" class="btn-check" name="viewMode" id="listMode">
+            <label class="btn btn-outline-secondary" for="listMode">
+              <i class='bx bx-list-ul me-1'></i> List
+            </label>
+          </div>
+        </div>
+
+        <div class="col-md-5">
+          <div class="btn-group w-100" role="group" aria-label="Status filters">
+            <input type="radio" class="btn-check" name="statusFilter" id="filterAll" checked>
+            <label class="btn btn-outline-secondary" for="filterAll">All</label>
+
+            <input type="radio" class="btn-check" name="statusFilter" id="filterVacant">
+            <label class="btn btn-outline-secondary" for="filterVacant">
+              <span class="status-dot vacant me-1"></span> Vacant
+            </label>
+
+            <input type="radio" class="btn-check" name="statusFilter" id="filterOccupied">
+            <label class="btn btn-outline-secondary" for="filterOccupied">
+              <span class="status-dot occupied me-1"></span> Occupied
+            </label>
+
+            <input type="radio" class="btn-check" name="statusFilter" id="filterUnavailable">
+            <label class="btn btn-outline-secondary" for="filterUnavailable">
+              <span class="status-dot inactive me-1"></span> Unavailable
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="gallery-view" class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    <% @rooms.each do |room| %>
+      <% status = @room_statuses[room.id] %>
+      <div class="col">
+        <% if status == "unavailable" %>
+
+          <div class="card h-100 shadow-sm room-card bg-light" data-room-id="<%= room.id %>">
+            <div class="card-body text-center">
+              <h3 class="card-title">Room <%= room.room_number %></h3>
+              <div class="room-status-wrap">
+                <p class="room-status text-secondary mb-0">
+                  <span class="status-indicator inactive"></span>
+                  Unavailable
+                </p>
+              </div>
+            </div>
+          </div>
+        <% else %>
+
+          <a href="<%= room_display_path(room) %>" class="text-decoration-none">
+            <div class="card h-100 shadow-sm room-card <%= status == "time_in" ? "occupied-card" : "vacant-card" %>" data-room-id="<%= room.id %>">
+              <div class="card-body text-center">
+                <h3 class="card-title">Room <%= room.room_number %></h3>
+                <div class="room-status-wrap">
+                  <p class="room-status <%= status == "time_in" ? "text-danger" : "text-success" %> mb-0">
+                    <span class="status-indicator <%= status == "time_in" ? "occupied" : "vacant" %>"></span>
+                    <%= status == "time_in" ? "Occupied" : "Vacant" %>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </a>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div id="list-view" class="card shadow-sm border-0 rounded-3 d-none">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+        <tr>
+          <th>Room Number</th>
+          <th class="text-center">Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @rooms.each do |room| %>
+          <% status = @room_statuses[room.id] %>
+          <tr class="room-row"
+              data-room-id="<%= room.id %>"
+              data-room-number="<%= room.room_number %>"
+              data-status="<%= status %>">
+            <td>Room <%= room.room_number %></td>
+            <td class="text-center">
+              <% if status == "unavailable" %>
+                  <span class="d-inline-flex align-items-center">
+                    <span class="status-dot inactive me-2"></span>
+                    <span class="text-secondary">Unavailable</span>
+                  </span>
+              <% elsif status == "time_in" %>
+                  <span class="d-inline-flex align-items-center">
+                    <span class="status-dot occupied me-2"></span>
+                    <span class="text-danger">Occupied</span>
+                  </span>
+              <% else %>
+                  <span class="d-inline-flex align-items-center">
+                    <span class="status-dot vacant me-2"></span>
+                    <span class="text-success">Vacant</span>
+                  </span>
+              <% end %>
+            </td>
+            <td class="text-end">
+              <% if status != "unavailable" %>
+                <a href="<%= room_display_path(room) %>" class="btn btn-sm btn-outline-primary">
+                  <i class='bx bx-info-circle me-1'></i> Details
+                </a>
+              <% else %>
+                <button class="btn btn-sm btn-outline-secondary" disabled>
+                  <i class='bx bx-lock-alt me-1'></i> Unavailable
+                </button>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const searchInput = document.getElementById('room-search');
+        const roomCards = document.querySelectorAll('.room-card');
+        const roomRows = document.querySelectorAll('.room-row');
+
+        searchInput.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+
+            roomCards.forEach(card => {
+                const roomNumber = card.querySelector('.card-title').textContent.toLowerCase();
+                if (roomNumber.includes(searchTerm)) {
+                    card.closest('.col').style.display = '';
+                } else {
+                    card.closest('.col').style.display = 'none';
+                }
+            });
+
+            roomRows.forEach(row => {
+                const roomNumber = row.getAttribute('data-room-number').toLowerCase();
+                if (roomNumber.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        const galleryView = document.getElementById('gallery-view');
+        const listView = document.getElementById('list-view');
+        const galleryModeBtn = document.getElementById('galleryMode');
+        const listModeBtn = document.getElementById('listMode');
+
+        galleryModeBtn.addEventListener('change', function () {
+            if (this.checked) {
+                galleryView.classList.remove('d-none');
+                listView.classList.add('d-none');
+            }
+        });
+
+        listModeBtn.addEventListener('change', function () {
+            if (this.checked) {
+                listView.classList.remove('d-none');
+                galleryView.classList.add('d-none');
+            }
+        });
+
+        const filterAll = document.getElementById('filterAll');
+        const filterVacant = document.getElementById('filterVacant');
+        const filterOccupied = document.getElementById('filterOccupied');
+        const filterUnavailable = document.getElementById('filterUnavailable');
+
+        function applyFilters(status) {
+
+            roomCards.forEach(card => {
+                const roomStatus = card.querySelector('.room-status').textContent.trim().toLowerCase();
+                const col = card.closest('.col');
+
+                if (status === 'all' ||
+                    (status === 'vacant' && roomStatus.includes('vacant')) ||
+                    (status === 'occupied' && roomStatus.includes('occupied')) ||
+                    (status === 'unavailable' && roomStatus.includes('unavailable'))) {
+                    col.style.display = '';
+                } else {
+                    col.style.display = 'none';
+                }
+            });
+
+            roomRows.forEach(row => {
+                const rowStatus = row.getAttribute('data-status');
+
+                if (status === 'all' ||
+                    (status === 'vacant' && rowStatus !== 'time_in' && rowStatus !== 'unavailable') ||
+                    (status === 'occupied' && rowStatus === 'time_in') ||
+                    (status === 'unavailable' && rowStatus === 'unavailable')) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        filterAll.addEventListener('change', function () {
+            if (this.checked) applyFilters('all');
+        });
+
+        filterVacant.addEventListener('change', function () {
+            if (this.checked) applyFilters('vacant');
+        });
+
+        filterOccupied.addEventListener('change', function () {
+            if (this.checked) applyFilters('occupied');
+        });
+
+        filterUnavailable.addEventListener('change', function () {
+            if (this.checked) applyFilters('unavailable');
+        });
+    });
+
+    function toggleFullscreen() {
+        const elem = document.documentElement;
+        const container = document.querySelector('.container');
+
+        if (!document.fullscreenElement) {
+            elem.requestFullscreen().then(() => {
+                container.classList.add('fullscreen-container');
+                document.querySelector('h2').classList.add('fullscreen-title');
+            }).catch(err => {
+                console.log(`Error attempting to enable fullscreen: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen().then(() => {
+                container.classList.remove('fullscreen-container');
+                document.querySelector('h2').classList.remove('fullscreen-title');
+            }).catch(err => {
+                console.log(`Error attempting to exit fullscreen: ${err.message}`);
+            });
+        }
+    }
+
+    setInterval(() => {
+        fetch("/room_statuses")
+            .then(res => res.json())
+            .then(data => {
+                document.querySelectorAll('.room-card').forEach(card => {
+                    const roomId = card.getAttribute('data-room-id');
+                    const newStatus = data[roomId];
+
+                    if (!newStatus) return;
+
+                    const statusText = card.querySelector('.room-status');
+                    const indicator = card.querySelector('.status-indicator');
+
+                    let cardBody = card.querySelector('.card-body');
+                    if (!cardBody) return;
+
+                    let newStatusHTML = '';
+                    let newCardClass = 'card h-100 shadow-sm room-card';
+
+                    if (newStatus === 'unavailable') {
+                        newStatusHTML = `
+                            <p class="room-status text-secondary mb-0">
+                                <span class="status-indicator inactive"></span>
+                                    Unavailable
+                                </p>`;
+                        newCardClass += ' bg-light';
+                    } else if (newStatus === 'time_in') {
+                        newStatusHTML = `
+                            <p class="room-status text-danger mb-0">
+                                <span class="status-indicator occupied"></span>
+                                    Occupied
+                            </p>`;
+                        newCardClass += ' occupied-card';
+                    } else {
+                        newStatusHTML = `
+                            <p class="room-status text-success mb-0">
+                                <span class="status-indicator vacant"></span>
+                                    Vacant
+                            </p>`;
+                        newCardClass += ' vacant-card';
+                    }
+
+                    // Update card class
+                    card.className = newCardClass;
+
+                    // Replace just the .room-status element
+                    let wrap = card.querySelector('.room-status-wrap');
+                    if (wrap) {
+                        wrap.innerHTML = newStatusHTML;
+                    }
+                });
+
+            })
+            .catch(err => console.error("Failed to update room statuses:", err));
+    }, 5000);
+
+</script>

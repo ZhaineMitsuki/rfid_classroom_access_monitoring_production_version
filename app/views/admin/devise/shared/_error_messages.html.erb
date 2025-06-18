@@ -1,0 +1,16 @@
+<% if resource.errors.any? %>
+  <div class="alert alert-danger error-container mb-3" role="alert" data-turbo-cache="false">
+    <div class="d-flex align-items-center mb-2">
+      <i class="bx bx-error-circle me-2" style="font-size: 20px;"></i>
+      <h6 class="mb-0 fw-semibold">
+        <%= pluralize(resource.errors.count, "error") %> prohibited this from being saved:
+      </h6>
+    </div>
+    
+    <ul class="mb-0 ps-3">
+      <% resource.errors.full_messages.each do |message| %>
+        <li class="error-message"><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

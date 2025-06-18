@@ -1,0 +1,114 @@
+<%= stylesheet_link_tag "add_form.css", "data-turbo-track": "reload" %>
+
+<%= render 'admin/notice_and_alert' %>
+
+<div class="page-container">
+  <div class="py-2 fade-in">
+    <% if notice %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= notice %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% end %>
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><%= link_to "Rooms", rooms_path, class: "text-decoration-none text-secondary" %></li>
+        <li class="breadcrumb-item active text-dark fw-bold">New Room</li>
+      </ol>
+    </nav>
+
+    <div class="form-container p-4 p-md-5 mt-3">
+      <div class="form-header">
+        <h2 class="mb-1 fw-bold">Register a New Room</h2>
+        <p class="text-secondary mb-0">This page allows you to add a new room to the system <span class="required-badge form-span">Some fields required</span></p>
+      </div>
+
+      <%= form_with(model: @room, method: :post, local: true, html: { novalidate: true, class: "needs-validation" }) do |form| %>
+        <div class="form-section-title">Room Information</div>
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <%= form.label :room_number, "Room Number", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.number_field :room_number, class: "form-control", placeholder: "Enter room number", required: true, min: 1,
+                                    data: { bs_toggle: "tooltip" }, title: "The room number value must be positive and greater than 0" %>
+              <div class="invalid-feedback">Room number is required</div>
+            </div>
+            <span class="field-hint">The unique identifying number for this room</span>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= form.label :room_status, "Room Status", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :room_status, Room.room_statuses.keys.map { |status| [status.capitalize, status] },
+                              { include_blank: "Select Room Status" },
+                              { class: "form-select", required: true } %>
+              <div class="invalid-feedback">Room status is required</div>
+            </div>
+            <span class="field-hint">Current operational status of the room</span>
+          </div>
+        </div>
+
+        <!-- ADDITIONAL INPUTS IF NEEDED -->
+
+<!--        <div class="form-section-title mt-3">Additional Details</div>-->
+<!--        <div class="row g-3">-->
+<!--          <div class="col-md-6 mb-3">-->
+            <%#= form.label :building, "Building", class: "form-label" %>
+<!--            <div class="input-group">-->
+              <%#= form.text_field :building, class: "form-control", placeholder: "Enter building name (Optional)" %>
+<!--            </div>-->
+<!--          </div>-->
+
+<!--          <div class="col-md-6 mb-3">-->
+            <%#= form.label :capacity, "Room Capacity", class: "form-label" %>
+<!--            <div class="input-group">-->
+              <%#= form.number_field :capacity, class: "form-control", placeholder: "Enter room capacity (Optional)" %>
+<!--            </div>-->
+<!--            <span class="field-hint">Maximum number of people allowed in the room</span>-->
+<!--          </div>-->
+<!--        </div>-->
+
+        <div class="form-footer">
+          <div class="btn-group-responsive">
+            <%= link_to rooms_path, class: "btn btn-reset me-md-2" do %>
+              <i class="bi bi-arrow-left"></i> Back to List
+            <% end %>
+          </div>
+          <div class="btn-group-responsive">
+            <button type="reset" class="btn btn-reset me-md-2">
+              <i class="bi bi-x-circle"></i> Reset Form
+            </button>
+            <%= form.button type: "submit", class: "btn btn-save" do %>
+              <i class="bi bi-building-add"></i> Register Room
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+    // Form validation script
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('.needs-validation');
+
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>

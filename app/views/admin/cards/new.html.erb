@@ -1,0 +1,110 @@
+<%= stylesheet_link_tag "add_form.css", "data-turbo-track": "reload" %>
+
+<div class="page-container">
+  <div class="py-2 fade-in">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><%= link_to "Cards", cards_path, class: "text-decoration-none text-secondary" %></li>
+        <li class="breadcrumb-item active text-dark fw-bold">New RFID Card/Tag</li>
+      </ol>
+    </nav>
+
+    <div class="form-container p-4 p-md-5 mt-3">
+      <div class="form-header">
+        <h2 class="mb-1 fw-bold">Register a New RFID Card/Tag</h2>
+        <p class="text-secondary mb-0">This page allows you to register a new RFID card/tag in the system <span class="required-badge form-span">Some fields required</span></p>
+      </div>
+
+      <%= form_with(model: @card, method: :post, local: true, html: { novalidate: true, class: "needs-validation" }) do |form| %>
+        <div class="mb-3">
+          <div class="form-section-title">RFID Number</div>
+          <p>Scanned RFID number:
+            <turbo-frame id="rfid-uid-placeholder" class="fw-bold">Waiting for scan...</turbo-frame>
+            <%= turbo_stream_from "rfid_scans" %>
+          </p>
+
+          <%= form.label :uid, "RFID Number", class: "form-label mt-2" %>
+          <%= form.text_field :uid, class: "form-control", id: "rfid-uid-input", required: true %>
+          <div class="invalid-feedback">RFID number is required</div>
+        </div>
+
+        <div class="form-section-title mt-3">Card Information</div>
+
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <%= form.label :status, "Card Status", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :status, Card.statuses.keys.map { |status| [status.capitalize, status] },
+                              { include_blank: "Select Status" },
+                              { class: "form-select", required: true, data: { bs_toggle: "tooltip" }, title: "Current status of the card" } %>
+              <div class="invalid-feedback">Card status is required</div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= form.label :uid_type, "RFID Type", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :uid_type, Card.uid_types.keys.map { |type| [type.capitalize, type] },
+                              { include_blank: "Select RFID Type" },
+                              { class: "form-select", required: true } %>
+              <div class="invalid-feedback">RFID type is required</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section-title mt-3">Assignment Information</div>
+        <div class="mb-3">
+          <%= form.label :user_id, "Professor", class: "form-label required-label" %>
+          <div class="input-group">
+            <%= form.select :user_id,
+                            User.active.where.not(role: :super_admin).order(:firstname).map { |user| ["#{[user.firstname, user.middlename, user.lastname].compact.join(' ')} (#{user.email})", user.id] },
+                            { include_blank: "Select Professor" },
+                            { class: "form-select", id: "user-select", required: true } %>
+            <div class="invalid-feedback">Professor selection is required</div>
+          </div>
+          <span class="field-hint">The professor this card will be assigned to</span>
+        </div>
+
+        <div class="form-footer">
+          <div class="btn-group-responsive">
+            <%= link_to cards_path, class: "btn btn-reset me-md-2" do %>
+              <i class="bi bi-arrow-left"></i> Back to List
+            <% end %>
+          </div>
+          <div class="btn-group-responsive">
+            <button type="reset" class="btn btn-reset me-md-2">
+              <i class="bi bi-x-circle"></i> Reset Form
+            </button>
+            <%= form.button type: "submit", class: "btn btn-save" do %>
+              <i class="bi bi-save"></i> Register Card
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+    // Form validation script
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('.needs-validation');
+
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>

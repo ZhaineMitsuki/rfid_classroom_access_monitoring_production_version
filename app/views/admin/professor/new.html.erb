@@ -1,0 +1,181 @@
+<%= stylesheet_link_tag "add_form.css", "data-turbo-track": "reload" %>
+
+<div class="page-container">
+  <div class="py-2 fade-in">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><%= link_to "Professor", professor_index_path, class: "text-decoration-none text-secondary" %></li>
+        <li class="breadcrumb-item active text-dark fw-bold">New Professor</li>
+      </ol>
+    </nav>
+
+    <div class="form-container p-4 p-md-5 mt-3">
+      <div class="form-header">
+        <h2 class="mb-1 fw-bold">Add Professor</h2>
+        <p class="text-secondary mb-0">This page allows you to add a new professor to the system <span class="required-badge form-span">Some fields required</span></p>
+      </div>
+
+      <%= form_with model: @user, url: professor_index_path, method: :post, local: true, data: { turbo: false }, html: { novalidate: true, class: "needs-validation" } do |form| %>
+        <div class="form-section-title">Personal Information</div>
+        <div class="row g-3">
+          <div class="col-md-4 mb-3">
+            <%= form.label :firstname, "First Name", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.text_field :firstname, class: "form-control", placeholder: "Enter first name", required: true,
+                                  autocomplete: "given-name", data: { bs_toggle: "tooltip" }, title: "Professor's legal first name" %>
+              <div class="invalid-feedback">First name is required</div>
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <%= form.label :middlename, "Middle Name", class: "form-label" %>
+            <div class="input-group">
+              <%= form.text_field :middlename, class: "form-control", placeholder: "Enter middle name (Optional)",
+                                  autocomplete: "additional-name" %>
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <%= form.label :lastname, "Last Name", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.text_field :lastname, class: "form-control", placeholder: "Enter last name", required: true,
+                                  autocomplete: "family-name" %>
+              <div class="invalid-feedback">Last name is required</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section-title mt-2">Contact Information</div>
+        <div class="mb-3">
+          <%= form.label :email, "Email Address", class: "form-label required-label" %>
+          <div class="input-group">
+            <%= form.email_field :email, class: "form-control", placeholder: "name@university.edu", required: true, autocomplete: "email", pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$" %>
+            <div class="invalid-feedback">Please enter a valid email address</div>
+          </div>
+          <span class="field-hint">This will be used as their login username</span>
+        </div>
+
+        <div class="form-section-title mt-3">Academic Information</div>
+        <div class="mb-3">
+          <%= form.label :academic_college, "Academic College", class: "form-label required-label" %>
+          <%= form.select :academic_college, User.academic_colleges.keys.map { |key| [key, key] },
+                          { prompt: "Select Academic College" },
+                          class: "form-select", required: true %>
+          <div class="invalid-feedback">Please select an academic college</div>
+          <span class="field-hint form-span">The primary college this professor is affiliated with</span>
+        </div>
+
+        <% if current_user.super_admin? %>
+          <div class="mb-3 mt-3">
+            <%= form.label :role, "User Role", class: "form-label required-label" %>
+            <%= form.select :role,
+                            User.roles.except("super_admin").keys.map { |r| [r.titleize, r] },
+                            { include_blank: "Select User Role" },
+                            class: "form-select", required: true %>
+            <div class="invalid-feedback">Please select a role</div>
+            <span class="field-hint form-span">Assign whether this user is a Professor or Admin</span>
+          </div>
+        <% end %>
+
+        <% if current_user.super_admin? %>
+          <div class="form-section-title mt-3">Account Security</div>
+
+          <div class="mb-3">
+            <%= form.label :password, "Password", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.password_field :password, class: "form-control", placeholder: "Enter password", required: true, id: "professorPassword" %>
+              <button class="btn btn-outline-secondary" type="button" id="toggleProfessorPassword" title="Show password" aria-label="Show password">
+                <i class="bi bi-eye"></i>
+              </button>
+              <div class="invalid-feedback">Password is required</div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :password_confirmation, "Confirm Password", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.password_field :password_confirmation, class: "form-control", placeholder: "Re-enter password", required: true, id: "professorPasswordConfirmation" %>
+              <button class="btn btn-outline-secondary" type="button" id="toggleProfessorPasswordConfirmation" title="Show password" aria-label="Show password">
+                <i class="bi bi-eye"></i>
+              </button>
+              <div class="invalid-feedback">Password confirmation is required</div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="form-footer">
+          <div class="btn-group-responsive">
+            <%= link_to professor_index_path, class: "btn btn-reset me-md-2" do %>
+              <i class="bi bi-arrow-left"></i> Back to List
+            <% end %>
+          </div>
+          <div class="btn-group-responsive">
+            <button type="reset" class="btn btn-reset me-md-2">
+              <i class="bi bi-x-circle"></i> Reset Form
+            </button>
+            <%= form.button type: "submit", class: "btn btn-save" do %>
+              <i class="bi bi-person-plus"></i> Create Professor
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+    // Form validation script
+    document.addEventListener('DOMContentLoaded', function () {
+        const forms = document.querySelectorAll('.needs-validation');
+
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Password toggle functionality
+        function setupPasswordToggle(buttonId) {
+            const toggleButton = document.getElementById(buttonId);
+            if (toggleButton) {
+                toggleButton.addEventListener('click', () => {
+                    const input = toggleButton.previousElementSibling;
+                    const icon = toggleButton.querySelector('i');
+
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.replace('bi-eye', 'bi-eye-slash');
+                        toggleButton.setAttribute('title', 'Hide password');
+                        toggleButton.setAttribute('aria-label', 'Hide password');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.replace('bi-eye-slash', 'bi-eye');
+                        toggleButton.setAttribute('title', 'Show password');
+                        toggleButton.setAttribute('aria-label', 'Show password');
+                    }
+                    
+                    // Add visual feedback
+                    toggleButton.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        toggleButton.style.transform = 'scale(1)';
+                    }, 100);
+                });
+            }
+        }
+
+        // Initialize password toggles
+        setupPasswordToggle('toggleProfessorPassword');
+        setupPasswordToggle('toggleProfessorPasswordConfirmation');
+    });
+</script>

@@ -1,0 +1,290 @@
+<%= stylesheet_link_tag "add_form.css", "data-turbo-track": "reload" %>
+
+<%= render 'admin/notice_and_alert' %>
+
+<div class="page-container">
+  <div class="py-2 fade-in">
+    <!-- Schedule Details Card -->
+    <div class="form-container p-4 mt-3">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center">
+          <div class="me-2">
+            <i class="bi bi-calendar-week text-success" style="font-size: 1.8rem;"></i>
+          </div>
+          <h5 class="mb-0 fw-bold text-success">Schedule Details</h5>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+        <div class="card-header bg-light border-0 p-4">
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                <i class="bi bi-calendar-date"></i>
+              </div>
+            </div>
+            <div class="col">
+              <h5 class="fw-bold mb-1"><%= @schedule.subject.upcase %></h5>
+              <p class="text-muted mb-0 d-flex align-items-center">
+                <i class="bi bi-person me-2"></i>
+                <%= @schedule.user&.firstname ? "#{@schedule.user.firstname} #{@schedule.user.lastname}" : "Unassigned" %>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body p-4">
+          <div class="row g-4">
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bi bi-tag"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">Type</span>
+                <div class="fw-bold"><%= @schedule.description.to_s.titleize %></div>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bi bi-calendar-check"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">Day & Time</span>
+                <div class="fw-bold"><%= @schedule.day.to_s.titleize %></div>
+                <small class="text-muted">
+                  <%= @schedule.start_time.strftime("%I:%M %p") %> - <%= @schedule.end_time.strftime("%I:%M %p") %>
+                </small>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bi bi-building"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">Location</span>
+                <div class="fw-bold">
+                  <% if @schedule.room %>
+                    Room <%= @schedule.room.room_number %>
+                  <% else %>
+                    Unassigned
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bi bi-mortarboard"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">School Year</span>
+                <div class="fw-bold"><%= @schedule.school_year %></div>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bi bi-bookmark-check"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">Semester</span>
+                <div class="fw-bold"><%= @schedule.semester.to_s.titleize %></div>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bi bi-award"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">Year Level</span>
+                <div class="fw-bold"><%= @schedule.year_level.to_s.titleize %></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav aria-label="breadcrumb" class="mt-3">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><%= link_to "Schedules", schedules_path, class: "text-decoration-none text-secondary" %></li>
+        <li class="breadcrumb-item active text-dark fw-bold">Edit Schedule</li>
+      </ol>
+    </nav>
+
+    <!-- Edit Form Container -->
+    <div class="form-container p-4 p-md-5 mt-3">
+      <div class="form-header">
+        <h2 class="mb-1 fw-bold">Edit Schedule Details</h2>
+        <p class="text-secondary mb-0">Update the information for this schedule <span class="required-badge form-span">Some fields required</span></p>
+      </div>
+
+      <%= form_with(model: @schedule, local: true, html: { novalidate: true, class: "needs-validation" }) do |form| %>
+        <div class="form-section-title">Schedule Information</div>
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <%= form.label :description, class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :description, Schedule.descriptions.keys.map { |w| [w.titleize, w] },
+                              { include_blank: "Select Description" },
+                              { class: "form-select", required: true } %>
+              <div class="invalid-feedback">Description is required</div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= form.label :subject, class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.text_field :subject, class: "form-control", placeholder: "Enter Subject", required: true %>
+              <div class="invalid-feedback">Subject is required</div>
+            </div>
+            <span class="field-hint">The subject or course code for this schedule</span>
+          </div>
+        </div>
+
+        <div class="form-section-title mt-3">Time & Location</div>
+        <div class="row g-3">
+          <div class="col-md-4 mb-3">
+            <%= form.label :day, class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :day, Schedule.days.keys.map { |w| [w.titleize, w] },
+                              { include_blank: "Select Day" },
+                              { class: "form-select", required: true } %>
+              <div class="invalid-feedback">Day is required</div>
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <%= form.label :start_time, class: "form-label required-label" %>
+            <div class="d-flex">
+              <%= form.time_field :start_time,
+                                  value: @schedule.start_time&.strftime("%H:%M"),
+                                  class: "form-control me-2",
+                                  required: true %>
+              <div class="invalid-feedback">Start time is required</div>
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <%= form.label :end_time, class: "form-label required-label" %>
+            <div class="d-flex">
+              <%= form.time_field :end_time,
+                                  value: @schedule.end_time&.strftime("%H:%M"),
+                                  class: "form-control me-2",
+                                  required: true %>
+              <div class="invalid-feedback">End time is required</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-3 mb-3">
+            <%= form.label :room_id, "Room", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :room_id,
+                              Room.left_joins(:schedules).distinct.order(:room_number)
+                                  .select { |room| @room_statuses[room.id] != "unavailable" }
+                                  .map { |room| ["Room #{room.room_number}", room.id] },
+                              { include_blank: "Select Room" },
+                              { class: "form-select", id: "room-select", required: true } %>
+              <div class="invalid-feedback">Room selection is required</div>
+            </div>
+            <span class="field-hint">Rooms marked as unavailable cannot be selected</span>
+          </div>
+
+          <div class="col-md-3 mb-3">
+            <%= form.label :school_year, "School Year", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :school_year,
+                              ((Date.current.year - 1)..(Date.current.year + 3)).map { |year| ["#{year}-#{year + 1}", "#{year}-#{year + 1}"] },
+                              { include_blank: "Select School Year" },
+                              { class: "form-select", required: true } %>
+              <div class="invalid-feedback">School year is required</div>
+            </div>
+          </div>
+
+          <div class="col-md-3 mb-3">
+            <%= form.label :semester, "Semester", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :semester,
+                              Schedule.semesters.keys.map { |w| [w.titleize, w] },
+                              { include_blank: "Select Semester" },
+                              { class: "form-select", required: true } %>
+              <div class="invalid-feedback">School year is required</div>
+            </div>
+          </div>
+
+
+          <div class="col-md-3 mb-3">
+            <%= form.label :year_level, "Year Level", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :year_level,
+                              Schedule.year_levels.keys.map { |w| [w.titleize, w] },
+                              { include_blank: "Select Year Level" },
+                              { class: "form-select", required: true } %>
+              <div class="invalid-feedback">Year Level is required</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section-title mt-3">Assignment</div>
+        <div class="mb-3">
+          <%= form.label :user_id, "Professor", class: "form-label required-label" %>
+          <div class="input-group">
+            <%= form.select :user_id,
+                            User.where(status: "active").where.not(role: :super_admin).order(:firstname)
+                                .map { |user| ["#{user.firstname} #{user.middlename} #{user.lastname}", user.id] },
+                            { include_blank: "Select Professor" },
+                            { class: "form-select", id: "user-select", required: true } %>
+            <div class="invalid-feedback">Professor selection is required</div>
+          </div>
+          <span class="field-hint">The professor who will be assigned to this schedule</span>
+        </div>
+
+        <div class="form-footer">
+          <div class="btn-group-responsive">
+            <%= link_to schedules_path, class: "btn btn-reset me-md-2" do %>
+              <i class="bi bi-arrow-left"></i> Back to List
+            <% end %>
+          </div>
+          <div class="btn-group-responsive">
+            <button type="reset" class="btn btn-reset me-md-2">
+              <i class="bi bi-x-circle"></i> Reset Form
+            </button>
+            <%= form.button type: "submit", class: "btn btn-save" do %>
+              <i class="bi bi-save"></i> Update Schedule
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+    // Form validation script
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('.needs-validation');
+
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>

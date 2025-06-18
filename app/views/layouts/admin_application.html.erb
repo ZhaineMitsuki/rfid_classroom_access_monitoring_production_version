@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>RFID-BASED CLASSROOM</title>
+
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+
+  <link rel="icon" href="<%= asset_path 'eset_logo.png' %>" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+  <%= stylesheet_link_tag "universal.css", "data-turbo-track": "reload" %>
+
+  <style>
+      .hide-in-fullscreen {
+          display: none !important;
+      }
+  </style>
+
+</head>
+
+<body>
+<!-- Fixed Header -->
+<div class="fixed-top">
+  <%= render 'admin/header' %>
+</div>
+
+<!-- Main Content Wrapper with Correct Padding -->
+<div class="page-wrapper">
+  <div class="d-flex flex-row" id="wrapper">
+    <%= render 'admin/sidebar' %>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content" id="main-content">
+      <%= yield %>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  </div>
+</div>
+
+<script>
+    function toggleFullscreen() {
+        const elem = document.documentElement;
+        if (!document.fullscreenElement) {
+            elem.requestFullscreen().then(() => {
+                // Hide header and sidebar in fullscreen
+                document.getElementById('main-header')?.classList.add('hide-in-fullscreen');
+                document.getElementById('sidebar')?.classList.add('hide-in-fullscreen');
+            }).catch(err => {
+                console.error('Error attempting to enable fullscreen', err);
+            });
+        } else {
+            document.exitFullscreen().then(() => {
+                // Restore header and sidebar visibility
+                document.getElementById('main-header')?.classList.remove('hide-in-fullscreen');
+                document.getElementById('sidebar')?.classList.remove('hide-in-fullscreen');
+            });
+        }
+    }
+
+    // When the fullscreen state changes (e.g. ESC is pressed), restore header/sidebar if needed
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) {
+            document.getElementById('main-header')?.classList.remove('hide-in-fullscreen');
+            document.getElementById('sidebar')?.classList.remove('hide-in-fullscreen');
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,216 @@
+<%= stylesheet_link_tag "add_form.css", "data-turbo-track": "reload" %>
+
+<%= render 'admin/notice_and_alert' %>
+
+<div class="page-container">
+  <div class="py-2 fade-in">
+
+    <!-- Professor Details Card -->
+    <div class="form-container p-4 mt-3">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center">
+          <div class="me-2">
+            <i class="bi bi-person-vcard text-success" style="font-size: 1.8rem;"></i>
+          </div>
+          <h5 class="mb-0 fw-bold text-success">Professor Details</h5>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+        <div class="card-header bg-light border-0 p-4">
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <div class=" file bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                <%= @user.firstname[0].upcase %><%= @user.lastname[0].upcase %>
+              </div>
+            </div>
+            <div class="col">
+              <h5 class="fw-bold mb-1"><%= @user.firstname.split.map(&:capitalize).join(' ') %> <%= @user.middlename.present? ? @user.middlename.split.map(&:capitalize).join(' ') : "" %> <%= @user.lastname.split.map(&:capitalize).join(' ') %></h5>
+              <p class="text-muted mb-0 d-flex align-items-center">
+                <i class="bx bx-envelope me-2"></i>
+                <%= @user.email %>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body p-4">
+          <div class="row g-4">
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bx bx-building"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">Academic College</span>
+                <div class="fw-bold"><%= User.academic_colleges.key(@user.academic_college) || @user.academic_college %></div>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bx bx-check-circle"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">Status</span>
+                <div class="fw-bold">
+                  <% if @user.status == "active" %>
+                  <span class="badge bg-success text-white rounded-pill px-3"><%= @user.status.to_s.humanize %></span>
+                    <% else %>
+                  <span class="badge bg-danger text-white rounded-pill px-3"><%= @user.status.to_s.humanize %></span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bx bx-id-card"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">Role</span>
+                <div class="fw-bold"><%= @user.role.to_s.humanize %></div>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bx bx-calendar-check"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">Registered Date</span>
+                <div class="fw-bold"><%= @user.created_at.strftime("%B %d, %Y") %></div>
+                <small class="text-muted"><i class="bx bx-time me-1"></i><%= @user.created_at.strftime("%I:%M %p") %></small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav aria-label="breadcrumb" class="mt-3">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><%= link_to "Professor", professor_index_path, class: "text-decoration-none text-secondary" %></li>
+        <li class="breadcrumb-item active text-dark fw-bold">Edit Professor</li>
+      </ol>
+    </nav>
+
+    <!-- Edit Form Container -->
+    <div class="form-container p-4 p-md-5 mt-3">
+      <div class="form-header">
+        <h2 class="mb-1 fw-bold">Edit Professor Details</h2>
+        <p class="text-secondary mb-0">Update the information for this professor <span class="required-badge form-span">Some fields required</span></p>
+      </div>
+
+      <%= form_with model: @user, url: professor_path(@user), method: :patch, local: true, data: { turbo: false }, html: { novalidate: true, class: "needs-validation" } do |form| %>
+        <div class="row g-3">
+          <div class="col-md-4 mb-3">
+            <%= form.label :firstname, "First Name", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.text_field :firstname, class: "form-control", required: true, value: @user.firstname %>
+              <div class="invalid-feedback">First name is required</div>
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <%= form.label :middlename, "Middle Name", class: "form-label" %>
+            <div class="input-group">
+              <%= form.text_field :middlename, class: "form-control", value: @user.middlename, placeholder: "Enter middle name (Optional)" %>
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <%= form.label :lastname, "Last Name", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.text_field :lastname, class: "form-control", required: true, value: @user.lastname %>
+              <div class="invalid-feedback">Last name is required</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <%= form.label :email, "Email Address", class: "form-label required-label" %>
+
+          <% if current_user.super_admin? %>
+            <div class="input-group">
+              <%= form.email_field :email, class: "form-control", required: true, value: @user.email, autocomplete: "email" %>
+            </div>
+            <span class="field-hint">You can edit this email address</span>
+          <% else %>
+            <div class="input-group">
+              <%= form.email_field :email, class: "form-control bg-light", readonly: true, value: @user.email, style: "cursor: not-allowed;" %>
+            </div>
+            <span class="field-hint">Email cannot be edited</span>
+          <% end %>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <%= form.label :academic_college, "Academic College", class: "form-label required-label" %>
+            <%= form.select :academic_college,
+                            User.academic_colleges.keys.map { |key| [key, key] },
+                            { include_blank: "Select Academic College", selected: @user.academic_college },
+                            { class: "form-select", required: true } %>
+            <div class="invalid-feedback">Please select an academic college</div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= form.label :role, "Role", class: "form-label required-label" %>
+
+            <% if current_user.super_admin? %>
+              <%= form.select :role,
+                              User.roles.except("super_admin").keys.map { |r| [r.titleize, r] },
+                              { include_blank: "Select Role" },
+                              class: "form-select", required: true %>
+            <% else %>
+              <div class="input-group">
+                <%= form.hidden_field :role, value: @user.role %>
+                <input type="text" class="form-control bg-light" value="<%= @user.role.humanize %>" readonly style="cursor: not-allowed;" />
+              </div>
+              <span class="field-hint">Role cannot be edited</span>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <div class="btn-group-responsive">
+            <%= link_to professor_index_path, class: "btn btn-reset me-md-2" do %>
+              <i class="bi bi-arrow-left"></i> Back to List
+            <% end %>
+          </div>
+          <div class="btn-group-responsive">
+            <button type="reset" class="btn btn-reset me-md-2">
+              <i class="bi bi-x-circle"></i> Reset Form
+            </button>
+            <%= form.button type: "submit", class: "btn btn-save" do %>
+              <i class="bi bi-person-plus"></i> Save
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+    // Form validation script
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('.needs-validation');
+
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>

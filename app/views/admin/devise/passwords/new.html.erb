@@ -1,0 +1,141 @@
+<%= stylesheet_link_tag "login", "data-turbo-track": "reload" %>
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<nav class="navbar navbar-expand-lg navbar-dark px-3 w-100">
+  <a class="navbar-brand d-flex align-items-center" href="#">
+    <%= image_tag "eset_logo.png", alt: "EsET Logo", height: "30", class: "me-2" %>
+    <span class="text-white">Electronics Engineering Technology Department</span>
+  </a>
+</nav>
+
+<div class="container d-flex flex-column align-items-center justify-content-center login-container">
+  <div class="login-card text-center">
+    <%= image_tag "eset_logo.png", alt: "EsET Logo", height: "60", class: "mb-3 logo-pulse" %>
+
+    <h5 class="fw-semibold mb-1">Forgot Your Password?</h5>
+    <p class="text-light mb-4" style="font-size: 13px; opacity: 0.85;">
+      Enter your email address and we'll send you reset instructions
+    </p>
+
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, id: "forgotPasswordForm" }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <% flash.each do |type, message| %>
+        <% if type == 'notice' %>
+          <div class="alert alert-success mb-3 auto-dismiss" role="alert" data-auto-dismiss="7000">
+            <div class="d-flex align-items-center">
+              <i class="bx bx-check-circle me-2" style="font-size: 20px;"></i>
+              <span><%= message %></span>
+            </div>
+          </div>
+        <% elsif type == 'alert' %>
+          <div class="custom-error-alert mb-3 auto-dismiss" role="alert" data-auto-dismiss="7000">
+            <div class="d-flex align-items-center">
+              <div class="error-icon-circle me-3">
+                <i class="bx bx-error-circle"></i>
+              </div>
+              <span><%= message %></span>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+
+      <div class="mb-3 text-start">
+        <%= f.label :email, class: "form-label" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", placeholder: "Enter your email address" %>
+      </div>
+
+      <div class="text-end">
+        <%= f.submit "Send Reset Instructions", class: "btn-login", id: "resetButton" %>
+      </div>
+
+      <div class="forgot-password mt-3">
+        <%= link_to "Back to Login", new_session_path(resource_name), class: "text-light small fw-light", style: "opacity: 0.85; text-decoration: none;" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+  <div id="resetToast" class="toast align-items-center text-white bg-success border-0"
+       role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body" id="resetToastMessage">Reset instructions sent to your email!</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto"
+              data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<%= javascript_include_tag "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" %>
+
+<script>
+    document.addEventListener('turbo:load', () => {
+        const resetForm = document.getElementById('forgotPasswordForm');
+        const resetButton = document.getElementById('resetButton');
+        const emailInput = document.querySelector('input[type="email"]');
+        const toastEl = document.getElementById('resetToast');
+        const toastMsg = document.getElementById('resetToastMessage');
+        const toast = new bootstrap.Toast(toastEl);
+
+        function toggleResetButton() {
+            if (emailInput && emailInput.value.trim()) {
+                resetButton.disabled = false;
+                resetButton.classList.remove('processing');
+            } else {
+                resetButton.disabled = true;
+                resetButton.classList.add('processing');
+            }
+        }
+
+        if (emailInput) {
+            emailInput.addEventListener('input', toggleResetButton);
+            toggleResetButton();
+        }
+
+        // Auto-dismiss functionality for flash messages
+        const autoDismissAlerts = document.querySelectorAll('.auto-dismiss');
+        autoDismissAlerts.forEach(alert => {
+            const dismissTime = parseInt(alert.getAttribute('data-auto-dismiss')) || 7000;
+            let timeoutId;
+            let startTime = Date.now();
+            let remainingTime = dismissTime;
+
+            const startDismissTimer = () => {
+                timeoutId = setTimeout(() => {
+                    alert.style.transition = 'all 0.5s ease-out';
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-20px)';
+                    setTimeout(() => {
+                        if (alert.parentNode) {
+                            alert.parentNode.removeChild(alert);
+                        }
+                    }, 500);
+                }, remainingTime);
+            };
+
+            // Start initial timer
+            startDismissTimer();
+
+            // Pause timer on hover
+            alert.addEventListener('mouseenter', () => {
+                clearTimeout(timeoutId);
+                remainingTime = Math.max(0, remainingTime - (Date.now() - startTime));
+            });
+
+            // Resume timer when mouse leaves
+            alert.addEventListener('mouseleave', () => {
+                startTime = Date.now();
+                startDismissTimer();
+            });
+        });
+
+        if (resetForm) {
+            resetForm.addEventListener('submit', (e) => {
+                resetButton.value = 'Sending...';
+                resetButton.disabled = true;
+                resetButton.classList.add('processing');
+            });
+        }
+    });
+</script>

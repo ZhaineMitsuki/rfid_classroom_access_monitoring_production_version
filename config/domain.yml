@@ -1,0 +1,13 @@
+development:
+  admin:
+    - "admin.com"
+    - ngrok-free.app
+  professor:
+    - "professor.com"
+production:
+  admin:
+    - "admin.com"
+    - "classroom-access-monitoring.onrender.com"
+  professor:
+    - "professor.com"
+    - "classroom-access-monitoring.onrender.com"

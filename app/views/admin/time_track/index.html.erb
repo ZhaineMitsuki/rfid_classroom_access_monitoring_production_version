@@ -1,0 +1,146 @@
+<%= stylesheet_link_tag "table.css", "data-turbo-track": "reload" %>
+<%= stylesheet_link_tag "time_track_additional.css", "data-turbo-track": "reload" %>
+
+<%= render 'admin/notice_and_alert' %>
+
+<div class="container-fluid px-4">
+  <h2 class="mt-3">List of Daily Logs</h2>
+  <p class="text-muted">This page contains a list of Daily Logs for all rooms</p>
+
+  <!-- SEARCH FILTER SECTION -->
+  <div class="search-filter-container mb-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="search-box">
+          <%= form_with url: time_track_index_path, method: :get, local: true do |f| %>
+            <div class="input-group">
+              <!-- Professor Filter -->
+              <div class="input-group-connected">
+              <span class="input-group-text">
+                <i class='bx bx-search'></i>
+              </span>
+                <%= f.text_field :professor_name, value: params[:professor_name], class: "form-control", placeholder: "Prof. Name" %>
+              </div>
+
+              <!-- Room Number Filter -->
+              <div class="input-group-connected">
+              <span class="input-group-text">
+                <i class='bx bx-door-open'></i>
+              </span>
+                <%= f.text_field :room_number, class: "form-control", placeholder: "Room Number", value: params[:room_number] %>
+              </div>
+
+              <!-- Status Filter -->
+              <%= f.select :status,
+                           options_for_select([["Ongoing", "time_in"], ["Timed Out", "time_out"]], params[:status]),
+                           { include_blank: 'Status' },
+                           class: "form-select dropdown-menu-search" %>
+
+              <!-- Start Date and End Date Filters -->
+                <div class="d-flex gap-2">
+                  <div class="form-floating" style="width:150px">
+                    <%= f.date_field :start_date,
+                                     value: params[:start_date],
+                                     id: "startDate",
+                                     class: "form-control",
+                                     placeholder: "Start Date" %>
+                    <%= f.label :start_date, "Start Date", for: "startDate" %>
+                  </div>
+
+                  <div class="form-floating" style="width:150px">
+                    <%= f.date_field :end_date,
+                                     value: params[:end_date],
+                                     id: "endDate",
+                                     class: "form-control",
+                                     placeholder: "End Date" %>
+                    <%= f.label :end_date, "End Date", for: "endDate" %>
+                  </div>
+                </div>
+
+              <%= f.button "Search", class: "btn search-btn", type: "submit" %>
+              <%= link_to "Reset", time_track_index_path, class: "btn reset-btn" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end mb-3">
+    <% if request.query_parameters.present? %>
+      <%= link_to "Download PDF", time_track_index_path(encrypted_params: EncryptionHelper.encrypt(request.query_parameters.to_query), format: :pdf),
+                  class: "btn btn-danger ms-2", target: "_blank", rel: "noopener" %>
+    <% else %>
+      <%= link_to "Download PDF", time_track_index_path(format: :pdf),
+                  class: "btn btn-danger ms-2", target: "_blank", rel: "noopener" %>
+    <% end %>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-container">
+    <table class="table table-bordered responsive-table">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Room Number</th>
+        <th scope="col">Professor Name</th>
+        <th scope="col">Check-in Time</th>
+        <th scope="col">Check-out Time</th>
+        <th scope="col">Status</th>
+        <th scope="col">Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% if @time_tracks.blank? %>
+        <tr>
+          <td colspan="8" class="text-center text-muted">No Matching Time Tracks Found</td>
+        </tr>
+      <% else %>
+        <% @time_tracks.each_with_index do |track, index| %>
+          <tr>
+            <td data-label="#">
+              <%= (@time_tracks.current_page - 1) * @time_tracks.limit_value + index + 1 %>
+            </td>
+            <td data-label="Room Number"><%= track.room.room_number || "No Room Assigned" %></td>
+            <td data-label="Professor Name">
+              <%= "#{track.user.firstname} #{track.user.middlename} #{track.user.lastname}" %>
+            </td>
+            <td data-label="Check-in Time">
+              <%= track.time_in.present? ? (Time.parse(track.time_in).strftime('%B %d, %Y %I:%M %p') rescue track.time_in) : "N/A" %>
+            </td>
+            <td data-label="Check-out Time">
+              <%= track.time_out.present? ?
+                    (Time.parse(track.time_out).strftime('%B %d, %Y %I:%M %p') rescue track.time_out) :
+                    content_tag(:span, "Unfinished Session", style: "color: red;") %>
+            </td>
+            <td>
+              <% if track.time_in? %>
+                <span class="badge bg-warning text-dark"><i class="bi bi-box-arrow-in-right me-1"></i>Ongoing</span>
+              <% else %>
+                <span class="badge bg-success"><i class="bi bi-box-arrow-right me-1"></i>Timed Out</span>
+              <% end %>
+            </td>
+            <td data-label="Actions">
+              <div class="action-buttons">
+                <%= link_to edit_time_track_path(track), class: "action-btn edit-btn", title: "Edit" do %>
+                  <i class='bx bx-edit-alt'></i>
+                <% end %>
+
+                <%= button_to time_track_path(track), method: :delete,
+                              class: "action-btn delete-btn", title: "Delete",
+                              data: { turbo_confirm: 'Are you sure you want to delete this time record?' } do %>
+                  <i class='bx bx-trash'></i>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <%= paginate @time_tracks %>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: classroom-access-monitoring
+    env: ruby
+    plan: free
+    buildCommand: "./bin/render-build.sh"
+    startCommand: "bundle exec puma -C config/puma.rb"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: classroom-access-db
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: SECRET_KEY_BASE
+        sync: false
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_SERVE_STATIC_FILES
+        value: true
+      - key: ENCRYPTION_KEY
+        sync: false
+      - key: ENCRYPTION_IV
+        sync: false
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+
+databases:
+  - name: classroom-access-db
+    databaseName: classroom_access_production
+    user: classroom_access_user
+    plan: free 

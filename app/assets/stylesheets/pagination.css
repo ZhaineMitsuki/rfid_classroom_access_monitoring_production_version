@@ -1,0 +1,98 @@
+.pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 20px 0;
+    font-family: Arial, sans-serif;
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+
+.pagination span {
+    margin: 0 3px;
+    margin-bottom: 5px;
+}
+
+.pagination a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 30px;
+    height: 30px;
+    padding: 0 5px;
+    text-decoration: none;
+    color: #555;
+    border-radius: 4px;
+}
+
+.pagination a:hover {
+    background-color: #f5f5f5;
+}
+
+.pagination .page.current {
+    background-color: #f8f9fa;
+    color: black;
+    border-radius: 4px;
+    min-width: 30px;
+    height: 30px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+.pagination .page.gap {
+    color: #777;
+    padding: 0 5px;
+}
+
+.pagination .prev a,
+.pagination .next a {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    color: #000;
+}
+
+.pagination .first a,
+.pagination .last a {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    color: #000;
+}
+
+@media (max-width: 576px) {
+    .pagination {
+        justify-content: center;
+    }
+
+    .pagination .page:not(.current) {
+        display: none;
+    }
+
+    .pagination .page.current + .page,
+    .pagination .page:nth-last-child(2) {
+        display: inline-flex;
+    }
+
+    .pagination .first a,
+    .pagination .last a,
+    .pagination .prev a,
+    .pagination .next a {
+        font-size: 0.85rem;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    .pagination .page:not(.current):not(:nth-child(-n+3)):not(:nth-last-child(-n+3)) {
+        display: none;
+    }
+}
+
+@media (hover: none) {
+    .pagination a {
+        min-width: 36px;
+        height: 36px;
+    }
+}

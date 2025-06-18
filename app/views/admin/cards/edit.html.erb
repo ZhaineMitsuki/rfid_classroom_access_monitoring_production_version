@@ -1,0 +1,221 @@
+<%= stylesheet_link_tag "add_form.css", "data-turbo-track": "reload" %>
+
+<%= render 'admin/notice_and_alert' %>
+
+<div class="page-container">
+  <div class="py-2 fade-in">
+
+    <!-- Card Details Card -->
+    <div class="form-container p-4 mt-3">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center">
+          <div class="me-2">
+            <i class="bi bi-credit-card text-success" style="font-size: 1.8rem;"></i>
+          </div>
+          <h5 class="mb-0 fw-bold text-success"><%= @card.uid_type.capitalize %> Details</h5>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+        <div class="card-header bg-light border-0 p-4">
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                <i class="bi bi-upc-scan"></i>
+              </div>
+            </div>
+            <div class="col">
+              <h5 class="fw-bold mb-1">RFID <%= @card.uid_type.capitalize %> #<%= @card.uid %></h5>
+              <p class="text-muted mb-0 d-flex align-items-center">
+                <i class="bi bi-person me-2"></i>
+                <%= if @card.user&.firstname.present?
+                      "#{@card.user.firstname} #{@card.user.middlename} #{@card.user.lastname}"
+                    else
+                      'Not Assigned'
+                    end %>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body p-4">
+          <div class="row g-4">
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bi bi-hash"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase"><%= @card.uid_type.capitalize %> Number</span>
+                <div class="fw-bold"><%= @card.uid %></div>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bi bi-tag"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">RFID Type</span>
+                <div class="fw-bold"><%= @card.uid_type.to_s.humanize %></div>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bi bi-check-circle"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">Status</span>
+                <div class="fw-bold">
+                  <% if @card.status == "Active" %>
+                    <span class="badge bg-success text-white rounded-pill px-3"><%= @card.status.to_s.humanize %></span>
+                  <% else %>
+                    <span class="badge bg-danger text-white rounded-pill px-3"><%= @card.status.to_s.humanize %></span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bi bi-calendar-check"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">Registered Date</span>
+                <div class="fw-bold"><%= @card.created_at.strftime("%B %d, %Y") %></div>
+                <small class="text-muted"><i class="bi bi-time me-1"></i><%= @card.created_at.strftime("%I:%M %p") %></small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav aria-label="breadcrumb" class="mt-3">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><%= link_to "Cards/Tags", cards_path, class: "text-decoration-none text-secondary" %></li>
+        <li class="breadcrumb-item active text-dark fw-bold">Edit <%= @card.uid_type.capitalize %></li>
+      </ol>
+    </nav>
+
+    <!-- Edit Form Container -->
+    <div class="form-container p-4 p-md-5 mt-3">
+      <div class="form-header">
+        <h2 class="mb-1 fw-bold">Edit RFID <%= @card.uid_type.capitalize %></h2>
+        <p class="text-secondary mb-0">Update the information for this RFID <%= @card.uid_type %> <span class="required-badge form-span">Some fields required</span></p>
+      </div>
+
+      <% if @card.errors.any? %>
+        <div class="alert alert-danger mb-4">
+          <h6 class="fw-bold mb-2"><i class="bi bi-exclamation-triangle-fill me-2"></i>Please fix the following errors:</h6>
+          <ul class="mb-0 ps-3">
+            <% @card.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%= form_with(model: @card, method: :put, local: true, html: { novalidate: true, class: "needs-validation" }) do |form| %>
+        <div class="mb-3">
+          <div class="form-section-title">RFID Number</div>
+
+          <% if current_user.super_admin? %>
+            <p>Scanned RFID number:
+              <turbo-frame id="rfid-uid-placeholder" class="fw-bold"><%= @card.uid %></turbo-frame>
+              <%= turbo_stream_from "rfid_scans" %>
+            </p>
+
+            <%= form.label :uid, "RFID Number", class: "form-label mt-2" %>
+            <%= form.text_field :uid, class: "form-control", id: "rfid-uid-input", required: true %>
+            <div class="invalid-feedback">RFID number is required</div>
+
+          <% else %>
+            <p>RFID number: <span class="fw-bold"><%= @card.uid %></span></p>
+            <%= form.hidden_field :uid, id: "rfid-uid-input" %>
+          <% end %>
+        </div>
+
+        <div class="form-section-title mt-2"><%= @card.uid_type.capitalize %> Information</div>
+
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <%= form.label :uid_type, "RFID Type", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :uid_type, Card.uid_types.keys.map { |type| [type.capitalize, type] },
+                              { include_blank: "Select RFID Type" },
+                              { class: "form-select", required: true } %>
+              <div class="invalid-feedback">RFID type is required</div>
+            </div>
+          </div>
+        </div>
+
+        <% if @card.user.present? %>
+          <div class="form-section-title mt-3">Assignment Information</div>
+
+          <% if current_user.super_admin? %>
+            <div class="mb-3">
+              <%= form.label :user_id, "Assigned Professor", class: "form-label required-label" %>
+              <%= form.select :user_id,
+                              User.active
+                                  .where.not(role: :super_admin)
+                                  .order(:firstname)
+                                  .map { |u| ["#{[u.firstname, u.middlename, u.lastname].compact.join(' ')} (#{u.email})", u.id] },
+                              { include_blank: "Select Professor" },
+                              { class: "form-select", required: true } %>
+              <span class="field-hint">You may reassign this <%= @card.uid_type %> to another active professor</span>
+            </div>
+          <% else %>
+            <div class="mb-3">
+              <label class="form-label">Assigned Professor</label>
+              <input type="text" class="form-control bg-light" readonly
+                     value="<%= "#{@card.user.firstname} #{@card.user.middlename} #{@card.user.lastname} (#{@card.user.email})" %>"
+                     style="cursor: not-allowed;">
+              <span class="field-hint">To reassign this <%= @card.uid_type %>, please deactivate it and register a new one</span>
+            </div>
+          <% end %>
+        <% end %>
+
+        <div class="form-footer">
+          <div class="btn-group-responsive">
+            <%= link_to cards_path, class: "btn btn-reset me-md-2" do %>
+              <i class="bi bi-arrow-left"></i> Back to List
+            <% end %>
+          </div>
+          <div class="btn-group-responsive">
+            <button type="reset" class="btn btn-reset me-md-2">
+              <i class="bi bi-x-circle"></i> Reset Form
+            </button>
+            <%= form.button type: "submit", class: "btn btn-save" do %>
+              <i class="bi bi-save"></i> Update <%= @card.uid_type.capitalize %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+    // Form validation script
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('.needs-validation');
+
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>

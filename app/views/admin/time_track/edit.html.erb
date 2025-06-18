@@ -1,0 +1,213 @@
+<%= stylesheet_link_tag "add_form.css", "data-turbo-track": "reload" %>
+
+<%= render 'admin/notice_and_alert' %>
+
+<div class="page-container">
+  <div class="py-2 fade-in">
+
+    <!-- Time Track Details Card -->
+    <div class="form-container p-4 mt-3">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center">
+          <div class="me-2">
+            <i class="bi bi-clock-history text-success" style="font-size: 1.8rem;"></i>
+          </div>
+          <h5 class="mb-0 fw-bold text-success">Time Track Details</h5>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+        <div class="card-header bg-light border-0 p-4">
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <div class="file bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                <%= @time_track.user.firstname[0].upcase %><%= @time_track.user.lastname[0].upcase %>
+              </div>
+            </div>
+            <div class="col">
+              <h5 class="fw-bold mb-1"><%= "#{@time_track.user.firstname.split.map(&:capitalize).join(' ')} #{@time_track.user.middlename.present? ? @time_track.user.middlename.split.map(&:capitalize).join(' ') : ''} #{@time_track.user.lastname.split.map(&:capitalize).join(' ')}" %></h5>
+              <p class="text-muted mb-0 d-flex align-items-center">
+                <i class="bx bx-home me-2"></i>
+                Room: <%= @time_track.room.room_number %>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body p-4">
+          <div class="row g-4">
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bx bx-time-five"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">Time In</span>
+                <div class="fw-bold"><%= @time_track.time_in.present? ? Time.parse(@time_track.time_in).strftime("%I:%M %p") : "Not recorded" %></div>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bx bx-time-five"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">Time Out</span>
+                <div class="fw-bold"><%= @time_track.time_out.present? ? Time.parse(@time_track.time_out).strftime("%I:%M %p") : "Not recorded" %></div>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bx bx-check-circle"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">Status</span>
+                <div class="fw-bold">
+                  <% if @time_track.status == "time_in" %>
+                    <span class="badge bg-primary text-white rounded-pill px-3">Ongoing</span>
+                  <% else %>
+                    <span class="badge bg-success text-white rounded-pill px-3">Timed Out</span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+              <div class="info-card border p-3 rounded-3 h-100 position-relative hover-card">
+                <div class="card-icon position-absolute top-0 end-0 mt-2 me-2 text-success">
+                  <i class="bx bx-calendar-check"></i>
+                </div>
+                <span class="text-muted d-block mb-1 small text-uppercase">Date</span>
+                <div class="fw-bold"><%= @time_track.created_at.present? ? @time_track.created_at.strftime("%B %d, %Y") : "N/A" %></div>
+                <small class="text-muted"><i class="bx bx-time me-1"></i><%= @time_track.created_at.present? ? @time_track.created_at.strftime("%I:%M %p") : "N/A" %></small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav aria-label="breadcrumb" class="mt-3">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><%= link_to "Time Tracks", time_track_index_path, class: "text-decoration-none text-secondary" %></li>
+        <li class="breadcrumb-item active text-dark fw-bold">Edit Time Track</li>
+      </ol>
+    </nav>
+
+    <!-- Edit Form Container -->
+    <div class="form-container p-4 p-md-5 mt-3">
+      <div class="form-header">
+        <h2 class="mb-1 fw-bold">Edit Time Track</h2>
+        <p class="text-secondary mb-0">Update time tracking information for this professor <span class="required-badge form-span">Some fields required</span></p>
+      </div>
+
+      <%= form_with model: @time_track, url: time_track_path(@time_track), method: :patch, local: true, data: { turbo: false }, html: { novalidate: true, class: "needs-validation" } do |form| %>
+
+        <div class="row g-3">
+
+          <div class="col-md-6 mb-3">
+            <%= form.label :user_id, "Professor Name", class: "form-label" %>
+            <div class="input-group">
+              <input type="text" class="form-control bg-light" value="<%= "#{@time_track.user.firstname} #{@time_track.user.middlename} #{@time_track.user.lastname}" %>" readonly style="cursor: not-allowed;" />
+              <%= form.hidden_field :user_id, value: @time_track.user_id %>
+            </div>
+            <span class="field-hint">Professor cannot be changed</span>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= form.label :room_id, "Room Number", class: "form-label" %>
+            <div class="input-group">
+              <input type="text" class="form-control bg-light" value="<%= @time_track.room.room_number %>" readonly style="cursor: not-allowed;" />
+              <%= form.hidden_field :room_id, value: @time_track.room_id %>
+            </div>
+            <span class="field-hint">Room cannot be changed</span>
+          </div>
+        </div>
+
+        <div class="row g-3">
+
+          <div class="col-md-6 mb-3">
+            <%= form.label :time_in, "Time In", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.time_field :time_in,
+                                  value: (@time_track.time_in.present? ? Time.parse(@time_track.time_in).strftime("%H:%M") : nil),
+                                  class: "form-control",
+                                  required: true %>
+              <div class="invalid-feedback">Time in is required</div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= form.label :time_out, "Time Out", class: "form-label" %>
+            <div class="input-group">
+              <%= form.time_field :time_out,
+                                  value: (@time_track.time_out.present? ? Time.parse(@time_track.time_out).strftime("%H:%M") : nil),
+                                  class: "form-control" %>
+            </div>
+            <span class="field-hint">Leave empty if professor has not timed out yet</span>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <%= form.label :status, "Status", class: "form-label required-label" %>
+          <div class="input-group">
+            <%= form.select :status,
+                            [["Ongoing", "time_in"], ["Timed Out", "time_out"]],
+                            { include_blank: "Select Status" },
+                            { class: "form-select", required: true } %>
+            <div class="invalid-feedback">Please select a status</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <%= form.label :created_at, "Date", class: "form-label" %>
+          <div class="input-group">
+            <input type="text" class="form-control bg-light" value="<%= @time_track.created_at.present? ? @time_track.created_at.strftime("%B %d, %Y") : "N/A" %>" readonly style="cursor: not-allowed;" />
+            <%= form.hidden_field :created_at, value: @time_track.created_at %>
+          </div>
+          <span class="field-hint">Date cannot be changed</span>
+        </div>
+
+        <div class="form-footer">
+          <div class="btn-group-responsive">
+            <%= link_to time_track_index_path, class: "btn btn-reset me-md-2" do %>
+              <i class="bi bi-arrow-left"></i> Back to List
+            <% end %>
+          </div>
+          <div class="btn-group-responsive">
+            <button type="reset" class="btn btn-reset me-md-2">
+              <i class="bi bi-x-circle"></i> Reset Form
+            </button>
+            <%= form.button type: "submit", class: "btn btn-save" do %>
+              <i class="bi bi-clock-history"></i> Update
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+    // Form validation script
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('.needs-validation');
+
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>

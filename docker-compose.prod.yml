@@ -1,0 +1,63 @@
+version: '3'
+services:
+  db:
+    image: mariadb:10.5.13
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app_network
+
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+    restart: always
+    environment:
+      - RAILS_ENV=production
+      - RAILS_MAX_THREADS=5
+      - WEB_CONCURRENCY=2
+      - REDIS_URL_CACHING=redis://redis:6379/0
+      - DATABASE_URL=mysql2://${DB_USER}:${DB_PASSWORD}@db:3306/${DB_NAME}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+    depends_on:
+      - db
+      - redis
+    networks:
+      - app_network
+
+  redis:
+    image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    networks:
+      - app_network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./docker/nginx/ssl:/etc/nginx/ssl
+      - ./public:/usr/share/nginx/html
+    depends_on:
+      - app
+    networks:
+      - app_network
+
+volumes:
+  db_data:
+  redis_data:
+
+networks:
+  app_network:
+    driver: bridge 

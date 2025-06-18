@@ -1,0 +1,211 @@
+<%= stylesheet_link_tag "edit_profile.css", "data-turbo-track": "reload" %>
+<%= stylesheet_link_tag "universal.css", "data-turbo-track": "reload" %>
+
+<%= render 'admin/notice_and_alert' %>
+
+<div class="page-container">
+  <div class="py-3 fade-in">
+
+    <nav aria-label="breadcrumb" class="mb-4">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path, class: "text-decoration-none" %></li>
+        <li class="breadcrumb-item active fw-semibold">Edit Profile</li>
+      </ol>
+    </nav>
+
+    <div class="form-container admin-card mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center">
+          <div class="me-3">
+            <i class="bi bi-shield-lock text-success" style="font-size: 1.5rem;"></i>
+          </div>
+          <h4 class="mb-0 fw-bold">Admin Profile</h4>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden hover-card">
+        <div class="card-header bg-light border-0 p-4">
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <div class="avatar-profile bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; font-size: 1.8rem;">
+                <%= resource.firstname[0].upcase %><%= resource.lastname[0].upcase %>
+              </div>
+            </div>
+            <div class="col">
+              <h5 class="fw-bold mb-2"><%= resource.firstname %> <%= resource.middlename %> <%= resource.lastname %></h5>
+              <p class="text-muted mb-0 d-flex align-items-center">
+                <i class="bi bi-envelope-fill me-2"></i>
+                <%= resource.email %>
+              </p>
+              <span class="badge bg-success-subtle text-success mt-2">Administrator</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-container p-4 p-lg-5">
+      <div class="form-header mb-4">
+        <div class="d-flex align-items-center mb-2">
+          <i class="bi bi-pencil-square text-success me-2" style="font-size: 1.4rem;"></i>
+          <h3 class="mb-0 fw-bold">Edit Profile</h3>
+        </div>
+        <p class="text-secondary mb-0">Update your personal information and security details</p>
+      </div>
+
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "needs-validation", novalidate: true }) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <div class="form-section-title mb-3">
+          <i class="bi bi-person me-2"></i>Personal Information
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-4 mb-3">
+            <%= f.label :firstname, "First Name", class: "form-label required-label" %>
+            <%= f.text_field :firstname, class: "form-control", required: true, placeholder: "Enter first name" %>
+            <div class="invalid-feedback">Please provide your first name.</div>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <%= f.label :middlename, "Middle Name", class: "form-label" %>
+            <%= f.text_field :middlename, class: "form-control", placeholder: "Enter middle name (optional)" %>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <%= f.label :lastname, "Last Name", class: "form-label required-label" %>
+            <%= f.text_field :lastname, class: "form-control", required: true, placeholder: "Enter last name" %>
+            <div class="invalid-feedback">Please provide your last name.</div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <%= f.label :email, "Email Address", class: "form-label" %>
+          <div class="input-group">
+            <%= f.email_field :email, class: "form-control bg-light", readonly: true, style: "cursor: not-allowed;" %>
+            <span class="input-group-text bg-light border-start-0"><i class="bi bi-lock-fill text-muted"></i></span>
+          </div>
+          <span class="field-hint">Email address cannot be modified</span>
+        </div>
+
+        <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+          <div class="alert alert-info d-flex align-items-center" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            <div>Currently waiting confirmation for: <strong><%= resource.unconfirmed_email %></strong></div>
+          </div>
+        <% end %>
+
+        <div class="form-section-title mb-3 mt-4">
+          <i class="bi bi-shield-lock me-2"></i>Security Settings
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <%= f.label :password, "New Password", class: "form-label" %>
+            <div class="input-group">
+              <%= f.password_field :password, class: "form-control", autocomplete: "new-password", placeholder: "Enter new password" %>
+              <button class="btn btn-outline-secondary border" type="button" id="togglePassword">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+            <% if @minimum_password_length %>
+              <span class="field-hint"><i class="bi bi-info-circle me-1"></i>Minimum <%= @minimum_password_length %> characters required</span>
+            <% end %>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= f.label :password_confirmation, "Confirm New Password", class: "form-label" %>
+            <div class="input-group">
+              <%= f.password_field :password_confirmation, class: "form-control", autocomplete: "new-password", placeholder: "Confirm new password" %>
+              <button class="btn btn-outline-secondary border" type="button" id="toggleConfirmPassword">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <%= f.label :current_password, "Current Password", class: "form-label required-label" %>
+          <div class="input-group">
+            <%= f.password_field :current_password, class: "form-control", autocomplete: "current-password", required: true, placeholder: "Enter your current password" %>
+            <button class="btn btn-outline-secondary border" type="button" id="toggleCurrentPassword">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+          <div class="invalid-feedback">Current password is required to save changes.</div>
+          <span class="field-hint"><i class="bi bi-shield-exclamation me-1"></i>Required to confirm your changes</span>
+        </div>
+
+        <div class="form-footer">
+          <div>
+            <%= link_to root_path, class: "btn btn-reset me-2" do %>
+              <i class="bi bi-arrow-left me-1"></i> Cancel
+            <% end %>
+          </div>
+          <div>
+            <button type="reset" class="btn btn-reset me-2">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+            </button>
+            <%= f.button type: "submit", class: "btn btn-save" do %>
+              <i class="bi bi-check2 me-1"></i>
+              Update Profile
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.addEventListener('turbo:load', function() {
+        const forms = document.querySelectorAll('.needs-validation');
+
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        function setupPasswordToggle(buttonId) {
+            const toggleButton = document.getElementById(buttonId);
+            if (toggleButton) {
+                toggleButton.addEventListener('click', () => {
+                    const input = toggleButton.previousElementSibling;
+                    const icon = toggleButton.querySelector('i');
+
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.replace('bi-eye', 'bi-eye-slash');
+                        toggleButton.setAttribute('title', 'Hide password');
+                        toggleButton.setAttribute('aria-label', 'Hide password');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.replace('bi-eye-slash', 'bi-eye');
+                        toggleButton.setAttribute('title', 'Show password');
+                        toggleButton.setAttribute('aria-label', 'Show password');
+                    }
+                    
+                    // Add visual feedback
+                    toggleButton.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        toggleButton.style.transform = 'scale(1)';
+                    }, 100);
+                });
+                
+                // Initialize tooltip and accessibility
+                toggleButton.setAttribute('title', 'Show password');
+                toggleButton.setAttribute('aria-label', 'Show password');
+                toggleButton.setAttribute('type', 'button');
+            }
+        }
+
+        setupPasswordToggle('togglePassword');
+        setupPasswordToggle('toggleConfirmPassword');
+        setupPasswordToggle('toggleCurrentPassword');
+    });
+</script>

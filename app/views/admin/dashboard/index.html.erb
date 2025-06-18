@@ -1,0 +1,678 @@
+<%= stylesheet_link_tag "dashboard.css", "data-turbo-track": "reload" %>
+<%= stylesheet_link_tag "table.css", "data-turbo-track": "reload" %>
+
+<%= render 'admin/notice_and_alert' %>
+
+<div class="container-fluid px-4 py-3">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h4 class="fw-bold" style="color: #06441b;">Dashboard</h4>
+      <div class="d-flex align-items-center">
+        <div class="badge bg-primary-soft me-2" style="color: #06441b;"><i class="bi bi-calendar3"></i> <%= @semester %></div>
+        <div class="badge bg-secondary-soft" style="color: #06441b;"><i class="bi bi-mortarboard"></i> <%= @school_year %></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+
+    <!-- Users Summary -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="card h-100 border-hover-primary" style="color: #06441b;">
+        <div class="card-body p-3">
+
+          <div class="d-flex justify-content-between mb-2">
+            <div>
+              <h6 class="fw-bold text-primary mb-0"><i class="bi bi-person-check"></i> Users</h6>
+              <p class="text-muted small mb-0">Total registered users</p>
+            </div>
+            <div class="stat-icon bg-primary-light rounded-circle d-flex align-items-center justify-content-center pulsate">
+              <i class="bi bi-people fs-4 text-primary"></i>
+            </div>
+          </div>
+
+          <h3 class="mb-0 mt-3 fw-bold counter" data-target="<%= @total_users %>">0</h3>
+
+          <div class="mt-3">
+            <div class="d-flex justify-content-between align-items-center mb-1 small">
+              <span><i class="bi bi-check-circle text-success"></i> Active</span>
+              <div>
+                <small class="text-muted"><span><%= @active_users %> (<%= @total_users > 0 ? (@active_users.to_f / @total_users * 100).round : 0 %>%)</span></small>
+              </div>
+            </div>
+
+            <div class="progress" style="height: 6px;">
+              <div class="progress-bar bg-success progress-animate" style="width: 0%" data-width="<%= @total_users > 0 ? (@active_users.to_f / @total_users * 100).round : 0 %>%"></div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center small mt-2">
+              <span><i class="bi bi-x-circle text-danger"></i> Inactive</span>
+              <div>
+                <small class="text-muted"><span><%= @inactive_users %> (<%= @total_users > 0 ? (@inactive_users.to_f / @total_users * 100).round : 0 %>%)</span></small>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Cards Summary -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="card h-100 border-hover-success">
+        <div class="card-body p-3">
+
+          <div class="d-flex justify-content-between mb-2">
+            <div>
+              <h6 class="fw-bold text-success mb-0"><i class="bi bi-credit-card"></i> Access Cards</h6>
+              <p class="text-muted small mb-0">Total registered cards</p>
+            </div>
+            <div class="stat-icon bg-success-light rounded-circle d-flex align-items-center justify-content-center pulsate">
+              <i class="bi bi-credit-card-2-front fs-4 text-success"></i>
+            </div>
+          </div>
+
+          <h3 class="mb-0 mt-3 fw-bold counter" data-target="<%= @total_cards %>">0</h3>
+
+          <div class="mt-3">
+            <div class="d-flex justify-content-between align-items-center mb-1 small">
+              <span><i class="bi bi-check-circle text-success"></i> Active</span>
+              <div>
+                <small class="text-muted"><span><%= @active_cards %> (<%= @total_cards > 0 ? (@active_cards.to_f / @total_cards * 100).round : 0 %>%)</span></small>
+              </div>
+            </div>
+
+            <div class="progress" style="height: 6px;">
+              <div class="progress-bar bg-success progress-animate" style="width: 0%" data-width="<%= @total_cards > 0 ? (@active_cards.to_f / @total_cards * 100).round : 0 %>%"></div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center small mt-2">
+              <span><i class="bi bi-x-circle text-danger"></i> Inactive</span>
+              <div>
+                <small class="text-muted"><span><%= @inactive_cards %> (<%= @total_cards > 0 ? (@inactive_cards.to_f / @total_cards * 100).round : 0 %>%)</span></small>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedules Summary -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="card h-100 border-hover-info">
+        <div class="card-body p-3">
+
+          <div class="d-flex justify-content-between mb-2">
+            <div>
+              <h6 class="fw-bold text-info mb-0"><i class="bi bi-calendar-check"></i> Schedules</h6>
+              <p class="text-muted small mb-0">Academic schedules</p>
+            </div>
+            <div class="stat-icon bg-info-light rounded-circle d-flex align-items-center justify-content-center pulsate">
+              <i class="bi bi-calendar3-week fs-4 text-info"></i>
+            </div>
+          </div>
+
+          <h3 class="mb-0 mt-3 fw-bold counter" data-target="<%= @total_schedules %>">0</h3>
+
+          <div class="d-flex flex-column gap-2 mt-3">
+            <div class="d-flex align-items-center">
+              <div class="flex-shrink-0">
+                <span class="badge bg-info p-2"><i class="bi bi-calendar3"></i></span>
+              </div>
+              <div class="flex-grow-1 ms-2 d-flex justify-content-between align-items-center">
+                <span class="small">Current Semester</span>
+                <span class="badge bg-dark fade-in"><%= @semester %></span>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center">
+              <div class="flex-shrink-0">
+                <span class="badge bg-primary p-2"><i class="bi bi-mortarboard"></i></span>
+              </div>
+              <div class="flex-grow-1 ms-2 d-flex justify-content-between align-items-center">
+                <span class="small">School Year</span>
+                <span class="badge bg-dark fade-in"><%= @school_year %></span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Rooms Summary -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="card h-100 border-hover-danger">
+        <div class="card-body p-3">
+
+          <div class="d-flex justify-content-between mb-2">
+            <div>
+              <h6 class="fw-bold text-danger mb-0"><i class="bi bi-door-closed"></i> Rooms</h6>
+              <p class="text-muted small mb-0">Classroom status</p>
+            </div>
+            <div class="stat-icon bg-danger-light rounded-circle d-flex align-items-center justify-content-center pulsate">
+              <i class="bi bi-building fs-4 text-danger"></i>
+            </div>
+          </div>
+
+          <div class="mt-3 small">
+            <div class="mb-3">
+              <p class="text-muted fw-semibold mb-2">STATUS</p>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="d-flex align-items-center">
+              <i class="bi bi-circle-fill text-success me-2"></i> Available
+            </span>
+                <span class="badge rounded-pill bg-success px-3"><%= @available_rooms %></span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+            <span class="d-flex align-items-center">
+              <i class="bi bi-circle-fill text-danger me-2"></i> Unavailable
+            </span>
+                <span class="badge rounded-pill bg-danger px-3"><%= @unavailable_rooms %></span>
+              </div>
+            </div>
+
+            <div>
+              <p class="text-muted fw-semibold mb-2">OCCUPANCY</p>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="d-flex align-items-center">
+              <i class="bi bi-door-open text-secondary me-2"></i> Vacant
+            </span>
+                <span class="badge rounded-pill bg-secondary px-3"><%= @vacant_rooms %></span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+            <span class="d-flex align-items-center">
+              <i class="bi bi-door-closed text-warning me-2"></i> Occupied
+            </span>
+                <span class="badge rounded-pill bg-warning text-dark px-3"><%= @occupied_rooms %></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RECENT ACTIVITIES -->
+  <div class="row mb-4">
+
+    <!-- Time Tracking Activity -->
+    <div class="col-12 col-lg-6 mb-4 mb-lg-0">
+      <div class="card card-hover-lift equal-height-card h-100 ">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h6 class="mb-0 fw-bold" style="color: #06441b;"><i class="bi bi-clock-history me-2"></i>Recent Activity</h6>
+          <% if @recent_time_tracks.present? && @recent_time_tracks.total_count > 0 %>
+            <span class="badge bg-light" style="color: #06441b;"><%= @recent_time_tracks.total_count %> entries</span>
+          <% end %>
+        </div>
+
+        <div class="card-body p-0">
+          <% if @recent_time_tracks.present? && @recent_time_tracks.any? %>
+
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+
+                <thead class="table-light">
+                <tr>
+                  <th>User</th>
+                  <th>Room</th>
+                  <th>Status</th>
+                  <th>Time</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <% @recent_time_tracks.each do |track| %>
+                  <tr>
+
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div>
+                          <% if track.user.present? %>
+                            <div class="fw-bold"><%= track.user.firstname %> <%= track.user.lastname %></div>
+                          <% else %>
+                            <div class="fw-bold">Unknown User</div>
+                          <% end %>
+                          <small class="text-muted">
+                            <% if track.card.present? %>
+                              <%= track.card.uid %>
+                            <% else %>
+                              No Card
+                            <% end %>
+                          </small>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td>
+                      <% if track.room.present? %>
+                        Room <%= track.room.room_number %>
+                      <% else %>
+                        Unknown Room
+                      <% end %>
+                    </td>
+                    <td>
+                      <% if track.time_in? %>
+                        <span class="badge bg-warning text-dark"><i class="bi bi-box-arrow-in-right me-1"></i>Ongoing</span>
+                      <% else %>
+                        <span class="badge bg-success"><i class="bi bi-box-arrow-right me-1"></i>Timed Out</span>
+                      <% end %>
+                    </td>
+
+                    <td>
+                      <% raw_time = (track.status == "time_in" ? track.time_in : track.time_out) %>
+                      <% if raw_time.present? %>
+                        <%= raw_time.to_time.strftime("%b %-d, %Y %-l:%M%P") %>
+                      <% else %>
+                        N/A
+                      <% end %>
+                    </td>
+
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="p-2">
+              <%= paginate @recent_time_tracks, param_name: :time_track_page %>
+            </div>
+
+          <% else %>
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-clock-history fs-1"></i>
+              <p>No recent activity found</p>
+            </div>
+          <% end %>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Today's Room Usage -->
+    <div class="col-12 col-lg-6">
+      <div class="card card-hover-lift h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h6 class="mb-0 fw-bold" style="color: #06441b;"><i class="bi bi-door-open me-2"></i>Today's Room Usage</h6>
+          <span class="badge bg-light" style="color: #06441b;"><i class="bi bi-calendar2-day me-1"></i><%= Time.current.strftime("%A, %l:%M %p") %></span>
+        </div>
+
+        <div class="card-body p-0">
+          <% if @todays_schedules.present? && @todays_schedules.any? %>
+
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+
+                <thead class="table-light">
+                <tr>
+                  <th>Room</th>
+                  <th>Subject</th>
+                  <th>Professor</th>
+                  <th>Time</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <% @todays_schedules.each do |schedule| %>
+                  <tr>
+                    <td>
+                      <% room = Room.find_by(id: schedule.room_id) %>
+                      <% if room.present? %>
+                        Room <%= room.room_number %>
+                      <% else %>
+                        Room <%= schedule.room_id %>
+                      <% end %>
+                    </td>
+
+                    <td><%= schedule.subject.upcase %></td>
+
+                    <td>
+                      <% if schedule.user.present? %>
+                        <%= schedule.user.firstname %> <%= schedule.user.lastname %>
+                      <% else %>
+                        Unknown Professor
+                      <% end %>
+                    </td>
+
+                    <td>
+                      <%= schedule.start_time.strftime('%I:%M %p') %> - <%= schedule.end_time.strftime('%I:%M %p') %>
+                    </td>
+
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="p-2">
+              <%= paginate @todays_schedules, param_name: :schedule_page %>
+            </div>
+
+          <% else %>
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-calendar-x fs-1"></i>
+              <p>No schedules for today</p>
+            </div>
+          <% end %>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Room Schedules -->
+  <div class="card card-hover-lift mb-4">
+
+    <div class="card-header">
+      <h6 class="mb-0 fw-bold" style="color: #06441b;"><i class="bi bi-calendar me-2"></i>Room Schedules - School Year <%= @school_year %></h6>
+
+      <div class="mt-3 d-flex flex-wrap gap-2 align-items-center">
+
+        <div class="input-group me-2" style="max-width: 350px;">
+        <span class="input-group-text bg-light border-end-0">
+          <i class="bi bi-search"></i>
+        </span>
+          <input type="text" class="form-control bg-light border-start-0" id="roomSearchInput" placeholder="Search rooms or subjects...">
+        </div>
+
+        <div class="d-flex align-items-center">
+          <label for="roomFilterDropdown" class="me-2 text-nowrap">Filter by:</label>
+          <select class="form-select form-select-sm custom-select" id="roomFilterDropdown" style="min-width: 120px;">
+            <option value="all">All Rooms</option>
+            <% @room_schedules.sort_by { |room_number, _| room_number.to_i }.each do |room_number, _| %>
+              <option value="<%= room_number %>">Room <%= room_number %></option>
+            <% end %>
+          </select>
+        </div>
+
+        <button class="btn btn-sm btn-outline-secondary" id="clearFiltersBtn">
+          <i class="bi bi-x-lg me-1"></i>Clear Filters
+        </button>
+
+        <div class="ms-auto">
+          <span class="badge bg-primary" id="roomResultsCount"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body p-0">
+      <% if @room_schedules.any? %>
+        <div style="max-height: 500px; overflow-y: auto;">
+          <div class="accordion" id="roomSchedulesAccordion">
+            <% @room_schedules.sort_by { |room_number, _| room_number.to_i }.each_with_index do |(room_number, schedules), index| %>
+              <div class="accordion-item room-schedule-item" data-room="<%= room_number %>" data-search-content="Room <%= room_number %> <%= schedules.map(&:subject).join(' ') %> <%= schedules.map { |s| s.user&.firstname.to_s + ' ' + s.user&.lastname.to_s }.join(' ') %>">
+                <h2 class="accordion-header" id="heading<%= room_number %>">
+                  <button class="accordion-button custom-accordion-button <%= index == 0 ? '' : 'collapsed' %>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= room_number %>" aria-expanded="<%= index == 0 ? 'true' : 'false' %>" aria-controls="collapse<%= room_number %>">
+                    <div class="d-flex align-items-center w-100">
+                      <i class="bi bi-door-closed me-2"></i>
+                      <span>Room <%= room_number %></span>
+                      <span class="badge bg-info text-white ms-2" style="background-color: #06441b !important"><%= schedules.count %> schedules</span>
+                    </div>
+                  </button>
+                </h2>
+
+                <div id="collapse<%= room_number %>" class="accordion-collapse collapse <%= index == 0 ? 'show' : '' %>" aria-labelledby="heading<%= room_number %>" data-bs-parent="#roomSchedulesAccordion">
+                  <div class="accordion-body p-0">
+                    <div class="table-responsive">
+
+                      <table class="table table-bordered mb-0">
+
+                        <thead class="table-light">
+                        <tr>
+                          <th>Monday</th>
+                          <th>Tuesday</th>
+                          <th>Wednesday</th>
+                          <th>Thursday</th>
+                          <th>Friday</th>
+                          <th>Saturday</th>
+                          <th>Sunday</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr>
+                          <% ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].each do |day| %>
+                            <td class="p-2">
+                              <div class="d-flex flex-column gap-2">
+                                <% schedules_for_day = schedules.select { |s| s.day == day }.sort_by { |s| s.start_time.seconds_since_midnight } %>
+                                <% if schedules_for_day.any? %>
+                                  <% schedules_for_day.each do |schedule| %>
+                                    <div class="schedule-item">
+                                      <div class="schedule-content">
+                                      <span class="badge bg-secondary mb-2 text-uppercase">
+                                        <%= schedule.year_level.to_s.humanize %>
+                                      </span>
+                                        <p class="mb-1 fw-bold"><%= schedule.subject.upcase %></p>
+                                        <p class="text-muted mb-1 small">
+                                          <i class="bi bi-person-fill me-1"></i><%= schedule.user.present? ? "#{schedule.user.firstname} #{schedule.user.lastname}" : 'Unassigned' %>
+                                        </p>
+                                        <p class="time-badge">
+                                          <i class="bi bi-clock-fill me-1"></i><%= schedule.start_time.strftime('%I:%M %p') %> - <%= schedule.end_time.strftime('%I:%M %p') %>
+                                        </p>
+                                      </div>
+                                    </div>
+                                  <% end %>
+                                <% else %>
+                                  <div class="text-center text-muted py-2">
+                                    No Schedule
+                                  </div>
+                                <% end %>
+                              </div>
+                            </td>
+                          <% end %>
+                        </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+
+          <div id="noRoomResults" class="text-center py-4 text-muted" style="display: none;">
+            <i class="bi bi-search fs-1"></i>
+            <p>No matching rooms found. Please try different search criteria.</p>
+            <button class="btn btn-outline-primary btn-sm mt-2" id="resetRoomSearchBtn">
+              <i class="bi bi-arrow-counterclockwise me-1"></i>Reset Search
+            </button>
+          </div>
+
+      <% else %>
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-calendar-x fs-1"></i>
+          <p>No active room schedules available</p>
+        </div>
+      <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+    function animateCounters() {
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200;
+
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-target'));
+            const inc = target / speed;
+
+            counter.textContent = '0';
+
+            const updateCount = () => {
+                const currentCount = parseInt(counter.textContent);
+                if (currentCount < target) {
+                    counter.textContent = Math.ceil(currentCount + inc);
+                    setTimeout(updateCount, 1);
+                } else {
+                    counter.textContent = target;
+                }
+            };
+
+            updateCount();
+        });
+
+        const progressBars = document.querySelectorAll('.progress-animate');
+        progressBars.forEach(bar => {
+            const targetWidth = bar.getAttribute('data-width');
+            bar.style.width = '0%';
+
+            setTimeout(() => {
+                bar.style.width = targetWidth;
+            }, 100);
+        });
+    }
+
+    function initRoomFilters() {
+        const roomFilter = document.getElementById('roomFilterDropdown');
+        const searchInput = document.getElementById('roomSearchInput');
+        const clearBtn = document.getElementById('clearFiltersBtn');
+        const noResultsDiv = document.getElementById('noRoomResults');
+        const resetSearchBtn = document.getElementById('resetRoomSearchBtn');
+        const resultsCount = document.getElementById('roomResultsCount');
+        const roomItems = document.querySelectorAll('.room-schedule-item');
+
+        updateResultsCount(roomItems.length);
+
+        if (roomFilter) {
+            roomFilter.addEventListener('change', function() {
+                applyFilters();
+            });
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                applyFilters();
+            });
+
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    applyFilters();
+                }
+            });
+        }
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                resetFilters();
+            });
+        }
+
+        if (resetSearchBtn) {
+            resetSearchBtn.addEventListener('click', function() {
+                resetFilters();
+            });
+        }
+
+        function applyFilters() {
+            const selectedRoom = roomFilter ? roomFilter.value : 'all';
+            const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+            let visibleCount = 0;
+
+            roomItems.forEach(item => {
+
+                const roomNumber = item.getAttribute('data-room');
+                const searchContent = item.getAttribute('data-search-content').toLowerCase();
+
+                const roomMatch = selectedRoom === 'all' || roomNumber === selectedRoom;
+                const searchMatch = !searchTerm || searchContent.includes(searchTerm);
+
+                if (roomMatch && searchMatch) {
+                    item.style.display = '';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            if (noResultsDiv) {
+                noResultsDiv.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
+
+            updateResultsCount(visibleCount);
+        }
+
+        function resetFilters() {
+            if (roomFilter) roomFilter.value = 'all';
+            if (searchInput) searchInput.value = '';
+
+            roomItems.forEach(item => {
+                item.style.display = '';
+            });
+
+            if (noResultsDiv) {
+                noResultsDiv.style.display = 'none';
+            }
+
+            updateResultsCount(roomItems.length);
+        }
+
+        function updateResultsCount(visibleCount) {
+            if (!resultsCount) return;
+
+            const totalItems = roomItems.length;
+
+            resultsCount.textContent = `${visibleCount} of ${totalItems} rooms`;
+
+            if (visibleCount === 0) {
+                resultsCount.className = 'badge bg-danger';
+            } else if (visibleCount < totalItems) {
+                resultsCount.className = 'badge bg-warning text-dark';
+            } else {
+                resultsCount.className = 'badge bg-primary';
+            }
+        }
+    }
+
+    function setupPaginationLinks() {
+        document.querySelectorAll('.pagination a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = new URL(this.href);
+
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => {
+                        window.location.href = url;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching paginated content:', error);
+                        window.location.href = url;
+                    });
+            });
+        });
+    }
+
+    function initDashboard() {
+        animateCounters();
+        initRoomFilters();
+        setupPaginationLinks();
+
+        console.log('Dashboard initialized successfully');
+    }
+
+    document.addEventListener('DOMContentLoaded', initDashboard);
+    document.addEventListener('turbo:load', initDashboard);
+    document.addEventListener('turbo:render', initDashboard);
+
+    document.addEventListener('turbo:before-render', function() {
+        document.querySelectorAll('.counter').forEach(counter => {
+            counter.textContent = '0';
+        });
+
+        document.querySelectorAll('.progress-animate').forEach(bar => {
+            bar.style.width = '0%';
+        });
+    });
+</script>

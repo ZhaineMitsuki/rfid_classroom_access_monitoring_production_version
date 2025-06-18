@@ -1,0 +1,190 @@
+<%= stylesheet_link_tag "add_form.css", "data-turbo-track": "reload" %>
+
+<%= render 'admin/notice_and_alert' %>
+
+<div class="page-container">
+  <div class="py-2 fade-in">
+    <% if notice %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= notice %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% end %>
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><%= link_to "Schedules", schedules_path, class: "text-decoration-none text-secondary" %></li>
+        <li class="breadcrumb-item active text-dark fw-bold">New Schedule</li>
+      </ol>
+    </nav>
+
+    <div class="form-container p-4 p-md-5 mt-3">
+      <div class="form-header">
+        <h2 class="mb-1 fw-bold">Create New Schedule</h2>
+        <p class="text-secondary mb-0">This page allows you to add a new schedule to the system <span class="required-badge form-span">Some fields required</span></p>
+      </div>
+
+      <%= form_with(model: @schedule, local: true, html: { novalidate: true, class: "needs-validation" }) do |form| %>
+        <div class="form-section-title">Schedule Information</div>
+        <div class="row g-3">
+          <div class="col-md-6 mb-3">
+            <%= form.label :description, class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :description, Schedule.descriptions.keys.map { |w| [w.titleize, w] },
+                              { include_blank: "Select Description" },
+                              { class: "form-select", required: true, data: { bs_toggle: "tooltip" }, title: "Type of schedule" } %>
+              <div class="invalid-feedback">Description is required</div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= form.label :subject, class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.text_field :subject, class: "form-control", placeholder: "Enter Subject", required: true %>
+              <div class="invalid-feedback">Subject is required</div>
+            </div>
+            <span class="field-hint">The subject or course code for this schedule</span>
+          </div>
+        </div>
+
+        <div class="form-section-title mt-3">Time & Location</div>
+        <div class="row g-3">
+          <div class="col-md-4 mb-3">
+            <%= form.label :day, class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :day, Schedule.days.keys.map { |w| [w.titleize, w] },
+                              { include_blank: "Select Day" },
+                              { class: "form-select", required: true } %>
+              <div class="invalid-feedback">Day is required</div>
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <%= form.label :start_time, class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.time_field :start_time,
+                                  value: Time.current.change(hour: 0, min: 0).strftime("%H:%M"),
+                                  class: "form-control me-2",
+                                  required: true %>
+              <div class="invalid-feedback">Start time is required</div>
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <%= form.label :end_time, class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.time_field :end_time,
+                                  value: Time.current.change(hour: 0, min: 0).strftime("%H:%M"),
+                                  class: "form-control me-2",
+                                  required: true %>
+              <div class="invalid-feedback">End time is required</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-3 mb-3">
+            <%= form.label :room_id, "Room", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :room_id,
+                              Room.left_joins(:schedules).distinct.order(:room_number)
+                                  .select { |room| @room_statuses[room.id] != "unavailable" }
+                                  .map { |room| ["Room #{room.room_number}", room.id] },
+                              { include_blank: "Select Room" },
+                              { class: "form-select", id: "room-select", required: true } %>
+              <div class="invalid-feedback">Room selection is required</div>
+            </div>
+            <span class="field-hint">Rooms marked as unavailable cannot be selected</span>
+          </div>
+
+          <div class="col-md-3 mb-3">
+            <%= form.label :school_year, "School Year", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :school_year,
+                              ((Date.current.year - 1)..(Date.current.year + 3)).map { |year| ["#{year}-#{year + 1}", "#{year}-#{year + 1}"] },
+                              { include_blank: "Select School Year" },
+                              { class: "form-select", required: true } %>
+              <div class="invalid-feedback">School year is required</div>
+            </div>
+          </div>
+
+          <div class="col-md-3 mb-3">
+            <%= form.label :semester, "Semester", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :semester,
+                              Schedule.semesters.keys.map { |w| [w.titleize, w] },
+                              { include_blank: "Select Semester" },
+                              { class: "form-select", required: true } %>
+              <div class="invalid-feedback">School year is required</div>
+            </div>
+          </div>
+
+          <div class="col-md-3 mb-3">
+            <%= form.label :year_level, "Year Level", class: "form-label required-label" %>
+            <div class="input-group">
+              <%= form.select :year_level,
+                              Schedule.year_levels.keys.map { |w| [w.titleize, w] },
+                              { include_blank: "Select Year Level" },
+                              { class: "form-select", required: true } %>
+              <div class="invalid-feedback">Year Level is required</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section-title mt-3">Assignment</div>
+        <div class="mb-3">
+          <%= form.label :user_id, "Professor", class: "form-label required-label" %>
+          <div class="input-group">
+            <%= form.select :user_id,
+                            User.where(status: "active").where.not(role: :super_admin).order(:firstname)
+                                .map { |user| ["#{user.firstname} #{user.middlename} #{user.lastname}", user.id] },
+                            { include_blank: "Select Professor" },
+                            { class: "form-select", id: "user-select", required: true } %>
+            <div class="invalid-feedback">Professor selection is required</div>
+          </div>
+          <span class="field-hint">The professor who will be assigned to this schedule</span>
+        </div>
+
+        <div class="form-footer">
+          <div class="btn-group-responsive">
+            <%= link_to schedules_path, class: "btn btn-reset me-md-2" do %>
+              <i class="bi bi-arrow-left"></i> Back to List
+            <% end %>
+          </div>
+          <div class="btn-group-responsive">
+            <button type="reset" class="btn btn-reset me-md-2">
+              <i class="bi bi-x-circle"></i> Reset Form
+            </button>
+            <%= form.button type: "submit", class: "btn btn-save" do %>
+              <i class="bi bi-calendar-plus"></i> Create Schedule
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+    // Form validation script
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('.needs-validation');
+
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>

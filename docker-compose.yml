@@ -1,0 +1,48 @@
+version: '3'
+services:
+  db:
+    image: postgres:15
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: classroom_access_123
+      POSTGRES_DB: classroom_access_development
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+      - ./docker/db:/docker-entrypoint-initdb.d
+
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+    stdin_open: true
+    tty: true
+    restart: always
+    volumes:
+      - .:/usr/src/app
+      - ~/.ssh:/root/.ssh:ro
+      - bundle-volume:/usr/local/bundle
+    ports:
+      - "3000:3000"
+      - "1234:1234"
+    environment:
+      - RAILS_ENV=development
+      - RAILS_MAX_THREADS=5
+      - WEB_CONCURRENCY=2
+      - REDIS_URL_CACHING=redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+
+  # Redis
+  redis:
+    image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+
+#Volumes
+volumes:
+  bundle-volume:

@@ -1,0 +1,186 @@
+<%= stylesheet_link_tag "login", "data-turbo-track": "reload" %>
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<nav class="navbar navbar-expand-lg navbar-dark px-3 w-100">
+  <a class="navbar-brand d-flex align-items-center" href="#">
+    <%= image_tag "eset_logo.png", alt: "EsET Logo", height: "30", class: "me-2" %>
+    <span class="text-white">Electronics Engineering Technology Department</span>
+  </a>
+</nav>
+
+<div class="container d-flex flex-column align-items-center justify-content-center login-container">
+  <div class="login-card text-center">
+    <%= image_tag "eset_logo.png", alt: "EsET Logo", height: "60", class: "mb-3 logo-pulse" %>
+
+    <h5 class="fw-semibold mb-1">Reset Your Password</h5>
+    <p class="text-light mb-4" style="font-size: 13px; opacity: 0.85;">
+      Enter your new password below
+    </p>
+
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, id: "resetPasswordForm" }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+      <%= f.hidden_field :reset_password_token %>
+
+      <% flash.each do |type, message| %>
+        <% if type == 'notice' %>
+          <div class="alert alert-success mb-3 auto-dismiss" role="alert" data-auto-dismiss="7000">
+            <div class="d-flex align-items-center">
+              <i class="bx bx-check-circle me-2" style="font-size: 20px;"></i>
+              <span><%= message %></span>
+            </div>
+          </div>
+        <% elsif type == 'alert' %>
+          <div class="custom-error-alert mb-3 auto-dismiss" role="alert" data-auto-dismiss="7000">
+            <div class="d-flex align-items-center">
+              <div class="error-icon-circle me-3">
+                <i class="bx bx-error-circle"></i>
+              </div>
+              <span><%= message %></span>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+
+      <div class="mb-3 text-start">
+        <%= f.label :password, "New Password", class: "form-label" %>
+        <div class="password-input-container">
+          <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: "form-control", id: "passwordInput", placeholder: "Enter new password" %>
+          <span class="password-toggle-icon" id="togglePassword">
+            <i class="bx bx-show" id="eyeIcon"></i>
+          </span>
+        </div>
+        <% if @minimum_password_length %>
+          <small class="text-light" style="opacity: 0.7;">Minimum <%= @minimum_password_length %> characters required</small>
+        <% end %>
+      </div>
+
+      <div class="mb-3 text-start">
+        <%= f.label :password_confirmation, "Confirm New Password", class: "form-label" %>
+        <div class="password-input-container">
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control", id: "confirmPasswordInput", placeholder: "Confirm your new password" %>
+          <span class="password-toggle-icon" id="toggleConfirmPassword">
+            <i class="bx bx-show" id="confirmEyeIcon"></i>
+          </span>
+        </div>
+      </div>
+
+      <div class="text-end">
+        <%= f.submit "Reset Password", class: "btn-login", id: "resetPasswordButton" %>
+      </div>
+
+      <div class="forgot-password mt-3">
+        <%= link_to "Back to Login", new_session_path(resource_name), class: "text-light small fw-light", style: "opacity: 0.85; text-decoration: none;" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<%= javascript_include_tag "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" %>
+
+<script>
+    document.addEventListener('turbo:load', () => {
+        const resetForm = document.getElementById('resetPasswordForm');
+        const resetButton = document.getElementById('resetPasswordButton');
+        const passwordInput = document.getElementById('passwordInput');
+        const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+
+        // Password visibility toggle functionality
+        function setupPasswordToggle(toggleId, inputId, iconId) {
+            const togglePassword = document.getElementById(toggleId);
+            const eyeIcon = document.getElementById(iconId);
+            const input = document.getElementById(inputId);
+
+            if (togglePassword && eyeIcon && input) {
+                togglePassword.addEventListener('click', function () {
+                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                    input.setAttribute('type', type);
+                    
+                    // Toggle eye icon with smooth transition
+                    if (type === 'password') {
+                        eyeIcon.classList.remove('bx-hide');
+                        eyeIcon.classList.add('bx-show');
+                        togglePassword.setAttribute('title', 'Show password');
+                    } else {
+                        eyeIcon.classList.remove('bx-show');
+                        eyeIcon.classList.add('bx-hide');
+                        togglePassword.setAttribute('title', 'Hide password');
+                    }
+                    
+                    // Add visual feedback
+                    togglePassword.style.transform = 'translateY(-50%) scale(0.9)';
+                    setTimeout(() => {
+                        togglePassword.style.transform = 'translateY(-50%) scale(1)';
+                    }, 100);
+                });
+                
+                // Initialize tooltip
+                togglePassword.setAttribute('title', 'Show password');
+            }
+        }
+
+        setupPasswordToggle('togglePassword', 'passwordInput', 'eyeIcon');
+        setupPasswordToggle('toggleConfirmPassword', 'confirmPasswordInput', 'confirmEyeIcon');
+
+        function toggleResetButton() {
+            if (passwordInput && confirmPasswordInput &&
+                passwordInput.value.trim() && confirmPasswordInput.value.trim()) {
+                resetButton.disabled = false;
+                resetButton.classList.remove('processing');
+            } else {
+                resetButton.disabled = true;
+                resetButton.classList.add('processing');
+            }
+        }
+
+        if (passwordInput && confirmPasswordInput) {
+            passwordInput.addEventListener('input', toggleResetButton);
+            confirmPasswordInput.addEventListener('input', toggleResetButton);
+            toggleResetButton();
+        }
+
+        // Auto-dismiss functionality for flash messages
+        const autoDismissAlerts = document.querySelectorAll('.auto-dismiss');
+        autoDismissAlerts.forEach(alert => {
+            const dismissTime = parseInt(alert.getAttribute('data-auto-dismiss')) || 7000;
+            let timeoutId;
+            let startTime = Date.now();
+            let remainingTime = dismissTime;
+
+            const startDismissTimer = () => {
+                timeoutId = setTimeout(() => {
+                    alert.style.transition = 'all 0.5s ease-out';
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-20px)';
+                    setTimeout(() => {
+                        if (alert.parentNode) {
+                            alert.parentNode.removeChild(alert);
+                        }
+                    }, 500);
+                }, remainingTime);
+            };
+
+            // Start initial timer
+            startDismissTimer();
+
+            // Pause timer on hover
+            alert.addEventListener('mouseenter', () => {
+                clearTimeout(timeoutId);
+                remainingTime = Math.max(0, remainingTime - (Date.now() - startTime));
+            });
+
+            // Resume timer when mouse leaves
+            alert.addEventListener('mouseleave', () => {
+                startTime = Date.now();
+                startDismissTimer();
+            });
+        });
+
+        if (resetForm) {
+            resetForm.addEventListener('submit', (e) => {
+                resetButton.value = 'Resetting...';
+                resetButton.disabled = true;
+                resetButton.classList.add('processing');
+            });
+        }
+    });
+</script>

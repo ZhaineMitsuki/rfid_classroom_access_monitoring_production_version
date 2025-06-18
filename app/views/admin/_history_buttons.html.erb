@@ -1,0 +1,12 @@
+<div class="d-flex justify-content-center flex-wrap gap-3 my-4">
+  <%= link_to 'PROFESSOR', history_professor_path, class: "btn btn-outline-success text-uppercase fw-semibold px-4 py-2 shadow-sm uniform-width-btn #{'active' if current_page?(history_professor_path)}" %>
+  <%= link_to 'CARD/TAG', history_card_path, class: "btn btn-outline-success text-uppercase fw-semibold px-4 py-2 shadow-sm uniform-width-btn #{'active' if current_page?(history_card_path)}" %>
+  <%= link_to 'ROOM', history_room_path, class: "btn btn-outline-success text-uppercase fw-semibold px-4 py-2 shadow-sm uniform-width-btn #{'active' if current_page?(history_room_path)}" %>
+  <%= link_to 'SCHEDULE', history_schedule_path, class: "btn btn-outline-success text-uppercase fw-semibold px-4 py-2 shadow-sm uniform-width-btn #{'active' if current_page?(history_schedule_path)}" %>
+</div>
+
+<style>
+    .uniform-width-btn {
+        min-width: 150px;
+    }
+</style>

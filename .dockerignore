@@ -1,0 +1,28 @@
+# Ignore version control
+.git
+.gitignore
+
+# Ignore logs and temp files
+log/*
+tmp/*
+*.log
+
+# Ignore system-specific or editor-specific files
+.DS_Store
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+
+# Ignore build artifacts
+node_modules/
+vendor/bundle/
+.bundle/
+coverage/
+public/packs/
+public/assets/
+
+# Ignore any dotenv files
+.env
+.env.*

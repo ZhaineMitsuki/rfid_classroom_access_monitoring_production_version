@@ -1,0 +1,64 @@
+<%= stylesheet_link_tag "sidebar.css", "data-turbo-track": "reload" %>
+
+<aside id="sidebar" class="your-sidebar-class">
+  <div class="sidebar" id="sidebar">
+
+    <div class="sidebar-heading">
+      <h3 class="fw-bold">RFID-based Classroom<br>Access Monitoring</h3>
+    </div>
+
+    <hr>
+
+    <div class="sidebar-menu">
+      <h6 class="text-muted fw-bold">Overview</h6>
+      <ul class="nav flex-column">
+        <%= link_to admin_root_path, class: "nav-menu-link #{'active' if current_page?(root_path) || current_page?(admin_root_path) || current_page?(dashboard_index_path) }" do %>
+          <i class='bx bx-grid-alt me-2'></i> Dashboard
+        <% end %>
+
+        <%= link_to professor_index_path, class: "nav-menu-link #{'active' if current_page?(professor_index_path) || current_page?(new_professor_path) || (request.path.include?('/professor/') && request.path.include?('/edit')) }" do %>
+          <i class='bx bx-user me-2'></i> Professors
+        <% end %>
+
+        <%= link_to cards_path, class: "nav-menu-link #{'active' if current_page?(cards_path) || current_page?(new_card_path) || (request.path.include?('/cards/') && request.path.include?('/edit')) }" do %>
+          <i class='bx bx-id-card me-2'></i> Cards
+        <% end %>
+
+        <%= link_to rooms_path, class: "nav-menu-link #{'active' if current_page?(rooms_path) || current_page?(new_room_path) || (request.path.include?('/rooms/') && request.path.include?('/edit')) }" do %>
+          <i class='bx bx-building me-2'></i> Rooms
+        <% end %>
+
+        <%= link_to schedules_path, class: "nav-menu-link #{'active' if current_page?(schedules_path) || current_page?(new_schedule_path) || (request.path.include?('/schedules/') && request.path.include?('/edit')) }" do %>
+          <i class='bx bx-calendar me-2'></i> Schedules
+        <% end %>
+      </ul>
+
+      <h6 class="text-muted fw-bold mt-5">Reports</h6>
+      <ul class="nav flex-column">
+        <%= link_to time_track_index_path, class: "nav-menu-link #{'active' if current_page?(time_track_index_path)}" do %>
+          <i class='bx bx-time me-2'></i> Daily Logs using RFID
+        <% end %>
+
+        <%= link_to room_display_index_path, data: { turbo: false }, class: "nav-menu-link #{'active' if request.path.start_with?(room_display_index_path) }" do %>
+          <i class='bx bx-desktop me-2'></i> Room Display
+        <% end %>
+
+        <%= link_to history_index_path, class: "nav-menu-link #{'active' if current_page?(history_index_path) || current_page?(history_professor_path) || current_page?(history_card_path) || current_page?(history_room_path) || current_page?(history_schedule_path)}" do %>
+          <i class='bx bx-trash me-2'></i> Archive
+      <% end %>
+      </ul>
+    </div>
+
+    <div class="user-actions-section">
+              <%= link_to edit_user_registration_path, class: "user-action-link edit-profile-link #{'active' if current_page?(edit_user_registration_path)}" do %>
+        <i class='bx bx-user-circle'></i> Edit Profile
+      <% end %>
+
+      <%= button_to destroy_user_session_path, method: :delete, class: "user-action-link sign-out-link" do %>
+        <i class='bx bx-log-out'></i> Sign Out
+      <% end %>
+    </div>
+  </div>
+
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+</aside>

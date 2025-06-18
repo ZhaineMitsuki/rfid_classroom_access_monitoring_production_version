@@ -1,0 +1,428 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+
+/* ========== BASE STYLES ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+:root {
+    --primary-color: #06441B;
+    --primary-color-dark: #053315;
+    --text-color: #333;
+    --muted-text: #777;
+    --light-bg: #f8f9fa;
+    --border-color: #ced4da;
+    --active-green: #0f5132;
+    --active-bg: #d1e7dd;
+    --inactive-red: #842029;
+    --inactive-bg: #f8d7da;
+    --unavailable-bg: #e3e0e0;
+    --unavailable-gray: #534e4e;
+    --header-height: 60px;
+}
+
+body {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+    background-color: var(--light-bg);
+}
+
+/* ========== LAYOUT WITH FIXED HEADER ========== */
+.page-wrapper {
+    padding-top: var(--header-height);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ========== LAYOUT - WRAPPER ========== */
+#wrapper {
+    width: 100%;
+    min-height: calc(100vh - var(--header-height));
+    overflow-x: hidden;
+    display: flex;
+    position: relative;
+}
+
+/* ========== MAIN CONTENT ========== */
+.main-content {
+    flex: 1;
+    min-width: 0;
+    padding: 15px;
+    overflow-y: auto;
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+.main-content h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 5px;
+}
+
+.main-content p {
+    color: var(--muted-text);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* ========== SEARCH BOX STYLES ========== */
+.search-filter-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.search-box .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 10px;
+}
+
+.search-box .input-group-connected {
+    display: flex;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    flex: 1;
+}
+
+.search-box .input-group-connected .input-group-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.75rem;
+    background-color: #fff;
+    border: none;
+}
+
+.search-box .input-group-connected .form-control {
+    border: none;
+    height: 38px;
+    padding: 0.5rem 0.75rem;
+    flex: 1;
+}
+
+.search-box .input-group-connected .form-control:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.search-box .form-select {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.5rem 0.75rem;
+    height: 38px;
+    background-color: #fff;
+    flex: 1;
+}
+
+.search-box .date-field {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.5rem 0.75rem;
+    height: 38px;
+    flex: 1;
+}
+
+.search-box .search-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: 1px solid var(--primary-color);
+    border-radius: 4px;
+    padding: 0.5rem 1.5rem;
+    height: 38px;
+    min-width: 100px;
+    transition: background-color 0.2s;
+}
+
+.search-box .search-btn:hover {
+    background-color: var(--primary-color-dark);
+}
+
+.search-box .reset-btn {
+    background-color: #fff;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.5rem 1.5rem;
+    height: 38px;
+    min-width: 100px;
+    transition: background-color 0.2s;
+}
+
+.search-box .reset-btn:hover {
+    background-color: #f1f1f1;
+}
+
+.search-box .button-group {
+    display: flex;
+    gap: 10px;
+}
+
+/* ========== BUTTONS ========== */
+/* Add professor button */
+.add-professor-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: 1px solid var(--primary-color);
+    padding: 6px 15px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.add-professor-btn i {
+    margin-right: 5px;
+    font-size: 18px;
+}
+
+.add-professor-btn:hover {
+    background-color: var(--primary-color-dark);
+    color: white;
+}
+
+/* ========== TABLE STYLES ========== */
+.table-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.responsive-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.responsive-table th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.responsive-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.responsive-table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.status-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-badge.active {
+    background-color: var(--active-bg);
+    color: var(--active-green);
+}
+
+.status-badge.inactive {
+    background-color: var(--inactive-bg);
+    color: var(--inactive-red);
+}
+
+.status-toggle {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+}
+
+.toggle-switch {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: var(--active-green);
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(16px);
+}
+
+/* ========== RESPONSIVE STYLES ========== */
+@media (max-width: 1199.98px) {
+    .search-box .input-group {
+        flex-wrap: wrap;
+    }
+
+    .search-box .form-select,
+    .search-box .input-group-connected,
+    .search-box .date-field {
+        min-width: 150px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .search-box .form-select,
+    .search-box .input-group-connected,
+    .search-box .date-field {
+        min-width: 120px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .search-box .input-group {
+        gap: 15px;
+    }
+
+    .search-box .form-select,
+    .search-box .input-group-connected,
+    .search-box .date-field {
+        flex: 0 0 100%;
+        width: 100%;
+    }
+
+    .search-box .button-group {
+        flex: 0 0 100%;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .search-box .search-btn,
+    .search-box .reset-btn {
+        flex: 1;
+    }
+
+    .main-content {
+        padding: 10px;
+    }
+
+    .main-content h2 {
+        font-size: 20px;
+    }
+
+    .responsive-table thead {
+        display: none;
+    }
+
+    .responsive-table tbody tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+    }
+
+    .responsive-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: right;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .responsive-table td:last-child {
+        border-bottom: none;
+    }
+
+    .responsive-table td::before {
+        content: attr(data-label);
+        font-weight: 500;
+        margin-right: 10px;
+        text-align: left;
+    }
+
+    .action-buttons {
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .navbar-brand span {
+        font-size: 12px;
+    }
+
+    .search-filter-container {
+        padding: 15px;
+    }
+
+    .search-box .button-group {
+        flex-direction: column;
+    }
+
+    .search-box .search-btn {
+        margin-bottom: 10px;
+    }
+
+    .search-box .input-group {
+        gap: 10px;
+    }
+
+    .search-filter-container .row {
+        flex-direction: column;
+    }
+
+    .filter-section {
+        flex-direction: column;
+    }
+
+    .filter-tags,
+    .filter-button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .add-professor-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .container-fluid {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}

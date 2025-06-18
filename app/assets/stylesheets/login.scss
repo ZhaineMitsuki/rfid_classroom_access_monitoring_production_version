@@ -1,0 +1,599 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:100,300,400,500,700,900');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to bottom, #06441B, #0FAA43);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('<%= asset_path("TUP_Main.jpg") %>') no-repeat center center/cover;
+    opacity: 0.08;
+    z-index: -1;
+    filter: blur(1px);
+    animation: fadeIn 2s ease-in-out;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #06441B;
+    z-index: 1000;
+    padding: 10px;
+    letter-spacing: 0.1em;
+    display: flex;
+    height: 60px;
+    animation: slideDown 0.8s ease-in-out;
+}
+
+.navbar-brand {
+    font-size: 14px;
+    color: white;
+    text-decoration: none;
+}
+
+.login-container {
+    min-height: calc(100vh - 60px);
+    margin-top: 60px;
+}
+
+.login-card {
+    background-color: rgba(6, 68, 27, 0.95);
+    backdrop-filter: blur(15px);
+    padding: 50px 40px;
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    color: #fff;
+    max-width: 450px;
+    width: 100%;
+    animation: fadeInUp 1s ease-in-out;
+    transition: all 0.4s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+}
+
+.login-card h5 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    letter-spacing: 0.03em;
+}
+
+.form-control {
+    background-color: rgba(255, 255, 255, 0.85);
+    border: none;
+    padding: 12px;
+    font-size: 12px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 3px rgba(15, 170, 67, 0.4);
+    transform: scale(1.02);
+}
+
+.password-input-container {
+    position: relative;
+    display: block;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+    z-index: 10;
+    transition: all 0.3s ease;
+    font-size: 20px;
+    padding: 6px;
+    border-radius: 4px;
+    background: transparent;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+.password-toggle-icon:hover {
+    color: #0faa43;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-50%);
+}
+
+.password-toggle-icon:active {
+    transform: translateY(-50%) scale(0.9);
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.password-input-container .form-control {
+    padding-right: 45px;
+}
+
+.btn-login {
+    background: linear-gradient(135deg, #0faa43, #06441b);
+    color: white;
+    padding: 8px 30px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+    background: white;
+    color: #06441B;
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.6);
+    transform: scale(1.05);
+}
+
+.logo-pulse {
+    animation: pulseGlow 2.5s infinite;
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.6));
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 8px 0;
+}
+
+.remember-me input[type="checkbox"] {
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    accent-color: #0faa43;
+    cursor: pointer;
+}
+
+.remember-me label {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 0;
+    transition: color 0.3s ease;
+}
+
+.remember-me label:hover {
+    color: #ffffff;
+}
+
+.link-container {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.link-container a {
+    color: white;
+    text-decoration: none;
+    margin: 0 5px;
+    opacity: 0.8;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.link-container a:hover {
+    opacity: 1;
+    text-decoration: underline;
+    transform: translateY(-2px);
+}
+
+.forgot-password {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.forgot-password a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 300;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid transparent;
+}
+
+.forgot-password a:hover {
+    color: #ffffff;
+    opacity: 1;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+}
+
+/* Error Message Styling */
+.error-container {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid #dc3545 !important;
+    border-radius: 8px !important;
+    color: #dc3545 !important;
+    padding: 12px 16px !important;
+    margin-bottom: 20px !important;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.15);
+    animation: slideInError 0.3s ease-out;
+}
+
+.error-container h6 {
+    color: #dc3545 !important;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.error-container ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.error-container .error-message {
+    color: #721c24 !important;
+    font-size: 13px;
+    font-weight: 400;
+    margin-bottom: 4px;
+    position: relative;
+    padding-left: 15px;
+    line-height: 1.4;
+}
+
+.error-container .error-message:before {
+    content: "•";
+    color: #dc3545;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.error-container .error-message:last-child {
+    margin-bottom: 0;
+}
+
+.error-container .bx-error-circle {
+    color: #dc3545;
+    font-size: 16px;
+}
+
+@keyframes slideInError {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Auto-dismiss animations */
+.auto-dismiss {
+    animation: slideInError 0.3s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.auto-dismiss::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.7), rgba(255,255,255,0.3));
+    width: 100%;
+    animation: progressBar 7s linear forwards;
+    opacity: 0.6;
+}
+
+.custom-error-alert::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(220, 53, 69, 0.5), rgba(220, 53, 69, 0.8), rgba(220, 53, 69, 0.5));
+    width: 100%;
+    animation: progressBar 7s linear forwards;
+    border-radius: 0 0 8px 8px;
+}
+
+@keyframes progressBar {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+/* Hover to pause auto-dismiss */
+.auto-dismiss:hover::after {
+    animation-play-state: paused;
+}
+
+/* Floating Notification (like Welcome message) */
+.floating-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(220, 53, 69, 0.95);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 9999;
+    min-width: 300px;
+    max-width: 400px;
+    animation: slideInFromRight 0.4s ease-out;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.floating-notification.error-notification {
+    background: rgba(220, 53, 69, 0.95);
+}
+
+.floating-notification .btn-close {
+    padding: 0;
+    margin: 0;
+    width: 20px;
+    height: 20px;
+    background-size: 16px;
+    opacity: 0.8;
+}
+
+.floating-notification .btn-close:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.floating-notification .bx-error-circle {
+    color: rgba(255, 255, 255, 0.9);
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
+}
+
+/* Animation for floating notification */
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Exit animation */
+.floating-notification.fade-out {
+    animation: slideOutToRight 0.4s ease-in forwards;
+}
+
+@keyframes slideOutToRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* Progress bar for floating notification */
+.floating-notification::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.5), rgba(255,255,255,0.8), rgba(255,255,255,0.5));
+    width: 100%;
+    animation: progressBar 7s linear forwards;
+    border-radius: 0 0 12px 12px;
+}
+
+/* Responsive design for floating notification */
+@media (max-width: 768px) {
+    .floating-notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+        max-width: none;
+    }
+}
+
+/* Success Message Styling (for when reset is successful) */
+.alert-success {
+    background: rgba(25, 135, 84, 0.1) !important;
+    border: 1px solid rgba(25, 135, 84, 0.3) !important;
+    border-radius: 12px !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(25, 135, 84, 0.2);
+}
+
+.alert-success .bx {
+    color: #198754;
+    filter: drop-shadow(0 0 4px rgba(25, 135, 84, 0.3));
+}
+
+/* Input field validation states */
+.form-control.is-invalid {
+    border: 2px solid #dc3545 !important;
+    box-shadow: 0 0 0 0.1rem rgba(220, 53, 69, 0.15) !important;
+    background-image: none !important;
+    background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.form-control.is-valid {
+    border: 2px solid #198754 !important;
+    box-shadow: 0 0 0 0.1rem rgba(25, 135, 84, 0.15) !important;
+    background-image: none !important;
+    background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Custom Error Alert Design (matching Devise unauthenticated style) */
+.custom-error-alert {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #dc3545;
+    border-left: 4px solid #dc3545;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #721c24;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.15);
+    animation: slideInError 0.3s ease-out;
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 20px;
+}
+
+.custom-error-alert .error-icon-circle {
+    width: 20px;
+    height: 20px;
+    background: rgba(220, 53, 69, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.custom-error-alert .error-icon-circle i {
+    color: #dc3545;
+    font-size: 14px;
+}
+
+/* Enhanced error styling for better visibility */
+.alert-danger.error-container {
+    border-left: 4px solid #dc3545 !important;
+}
+
+.alert-success {
+    border-left: 4px solid #198754 !important;
+}
+
+/* Smooth transitions for all alerts */
+.alert {
+    transition: all 0.3s ease-in-out;
+}
+
+.alert:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.processing {
+    cursor: not-allowed;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 0.2; }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulseGlow {
+    0% { filter: drop-shadow(0 0 3px rgba(255,255,255,0.3)); }
+    50% { filter: drop-shadow(0 0 8px rgba(255,255,255,0.7)); }
+    100% { filter: drop-shadow(0 0 3px rgba(255,255,255,0.3)); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spin-animation {
+    animation: spin 1s linear infinite;
+}
+
+@media (max-width: 768px) {
+    .login-card {
+        padding: 35px 25px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-card {
+        padding: 25px 20px;
+    }
+    .navbar-brand {
+        font-size: 12px;
+    }
+    .login-card h5 {
+        font-size: 14px;
+    }
+}
+
+#loadingLogo {
+    display: block;
+    margin: 0 auto 1rem;
+}
+
+#cardLogo,
+#loginForm,
+#messageContainer,
+#loadingLogo {
+    transition: opacity 0.8s ease-in-out;
+}
+
+#messageContainer,
+#loadingLogo {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.fade-in {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+.fade-out {
+    opacity: 0 !important;
+}
+
+

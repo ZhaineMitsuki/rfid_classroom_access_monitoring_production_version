@@ -1,0 +1,222 @@
+.card {
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 0.75rem;
+    box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.card-hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+}
+
+.border-hover-primary {
+    transition: border-color 0.3s;
+}
+
+.border-hover-primary:hover {
+    border-left: 3px solid #0d6efd;
+}
+
+.border-hover-success:hover {
+    border-left: 3px solid #198754;
+}
+
+.border-hover-info:hover {
+    border-left: 3px solid #0DCAF0FF;
+}
+
+.border-hover-danger:hover {
+    border-left: 3px solid #DC3545FF;
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 0.75rem 1rem;
+}
+
+.bg-primary-soft {
+    background-color: rgba(6, 68, 27, 0.15);
+}
+
+.bg-success-soft {
+    background-color: rgba(25, 135, 84, 0.15);
+}
+
+.bg-info-soft {
+    background-color: rgba(6, 68, 27, 0.15);
+}
+
+.bg-danger-soft {
+    background-color: rgba(220, 53, 69, 0.15);
+}
+
+.bg-warning-soft {
+    background-color: rgba(255, 193, 7, 0.15);
+}
+
+.bg-secondary-soft {
+    background-color: rgba(108, 117, 125, 0.15);
+}
+
+.stat-icon-container {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.progress {
+    height: 5px;
+    background-color: rgba(0,0,0,0.05);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.schedule-item {
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    border-left: 3px solid #06441b;;
+    margin-bottom: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.schedule-item:hover {
+    background-color: rgba(6, 68, 27, 0.05);
+}
+
+.schedule-content {
+    padding: 0.25rem 0.5rem;
+}
+
+.time-badge {
+    font-size: 0.75rem;
+    color: #06441b;
+    font-weight: 500;
+    margin-bottom: 0;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #6c757d;
+    border-top: none;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(6, 68, 27, 0.03);
+}
+
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    border-radius: 0.35rem;
+}
+
+/* Accordion styling */
+.custom-accordion-button {
+    background-color: white;
+    padding: 0.75rem 1rem;
+}
+
+.custom-accordion-button:not(.collapsed) {
+    background-color: rgba(6, 68, 27, 0.08);
+    color: #06441b;
+}
+
+.custom-accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0,0,0,0.125);
+    outline: none;
+}
+
+.pagination {
+    margin-bottom: 0;
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+}
+
+.pagination a, .pagination span {
+    padding: 5px 10px;
+    border-radius: 0.35rem;
+    font-size: 0.85rem;
+    color: #495057;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.pagination .current {
+    background-color: #06441b;
+    color: white;
+}
+
+.pagination a:hover {
+    background-color: rgba(6, 68, 27, 0.1);
+}
+
+.custom-select {
+    border-radius: 0.5rem;
+    border: 1px solid rgba(0,0,0,0.1);
+    padding: 0.375rem 1.75rem 0.375rem 0.75rem;
+    background-color: #f8f9fa;
+    transition: all 0.2s;
+}
+
+.custom-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(6, 68, 27, 0.25);
+    border-color: rgba(6, 68, 27, 0.5);
+}
+
+/* Animation */
+.counter {
+    transition: all 0.5s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@media (max-width: 767.98px) {
+    .stat-icon-container {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+
+    .card-header {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .table th, .table td {
+        padding: 0.5rem;
+    }
+}

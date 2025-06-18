@@ -1,0 +1,47 @@
+.search-filter-container .input-group {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%; /* Ensure the input-group takes full width */
+    align-items: center;
+    justify-content: space-between; /* Push buttons to the right */
+}
+
+.search-filter-container .form-select {
+    width: auto; /* Allow dropdowns to take only the space they need */
+    min-width: 240px; /* Set a minimum width for readability */
+    margin-right: 2px; /* Space between dropdowns */
+    border: 1px solid #ced4da;
+}
+
+.search-filter-container .input-group-text {
+    flex-shrink: 0; /* Prevent search icon from shrinking */
+}
+
+.search-filter-container .buttons-group {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0; /* Prevent buttons from shrinking */
+}
+
+.search-filter-container .search-btn,
+.search-filter-container .reset-btn {
+    white-space: nowrap;
+    margin-left: 5px; /* Space between buttons */
+}
+
+/* Ensure responsiveness for smaller screens */
+@media (max-width: 768px) {
+    .search-filter-container .input-group {
+        flex-wrap: wrap; /* Allow wrapping on small screens */
+        justify-content: flex-start; /* Align to start on small screens */
+    }
+
+    .search-filter-container .buttons-group {
+        margin-top: 10px; /* Add space if buttons wrap */
+    }
+
+    .search-filter-container .form-select {
+        min-width: 120px; /* Slightly smaller for mobile */
+        font-size: 0.9rem;
+    }
+}

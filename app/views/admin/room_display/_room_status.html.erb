@@ -1,0 +1,14 @@
+<%# app/views/admin/room_display/_room_status.html.erb %>
+  <% if room.room_status == "Unavailable" %>
+    <p class="room-status text-center fw-bold text-secondary" data-status="unavailable">
+      Unavailable
+    </p>
+  <% elsif status == "time_in" %>
+    <p class="room-status text-center fw-bold text-danger" data-status="occupied">
+      Occupied
+    </p>
+  <% else %>
+    <p class="room-status text-center fw-bold text-success" data-status="vacant">
+      Vacant
+    </p>
+  <% end %>
