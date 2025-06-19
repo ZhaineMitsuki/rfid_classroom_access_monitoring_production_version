@@ -19,18 +19,21 @@ class Admin::TimeTrackController < AdminApplicationController
     @rooms = Room.all
     @professors = User.where(role: "professor")
 
-    # Build the base filtered query.
-    time_tracks = TimeTrack.includes(:room, :user).where(remarks: nil).where.not(users: { role: :super_admin })
+    # Base query: includes relations, no super_admins
+    time_tracks = TimeTrack.includes(:room, :user)
+                           .where(remarks: nil)
+                           .where.not(users: { role: :super_admin })
 
     # Apply filters
     if params[:room_number].present?
-      time_tracks = time_tracks.joins(:room).where('rooms.room_number::text LIKE ?', "%#{params[:room_number].strip}%") if params[:room_number].present?
+      time_tracks = time_tracks.joins(:room)
+                               .where('rooms.room_number::text LIKE ?', "%#{params[:room_number].strip}%")
     end
 
     if params[:professor_name].present?
       prof_query = params[:professor_name].downcase.strip
       time_tracks = time_tracks.joins(:user).where(
-        "LOWER(users.firstname) LIKE :query OR LOWER(users.lastname) LIKE :query OR LOWER(users.firstname || \' \' || users.lastname) LIKE :query",
+        "LOWER(users.firstname) LIKE :query OR LOWER(users.lastname) LIKE :query OR LOWER(users.firstname || ' ' || users.lastname) LIKE :query",
         query: "%#{prof_query}%"
       )
     end
@@ -39,27 +42,25 @@ class Admin::TimeTrackController < AdminApplicationController
       time_tracks = time_tracks.where(status: params[:status])
     end
 
-    # Date filtering logic
+    # Date filter — optional only if parameters are present
     if params[:start_date].present? && params[:end_date].present?
       time_tracks = time_tracks.where("DATE(time_tracks.created_at) BETWEEN ? AND ?", params[:start_date], params[:end_date])
     elsif params[:start_date].present?
       time_tracks = time_tracks.where("DATE(time_tracks.created_at) = ?", params[:start_date])
     elsif params[:end_date].present?
       time_tracks = time_tracks.where("DATE(time_tracks.created_at) <= ?", params[:end_date])
-    else
-      time_tracks = time_tracks.where("DATE(time_tracks.created_at) = ?", Date.current)
     end
+    # ✅ No ELSE: so no date condition by default
 
-    # Sort by room number and created_at
+    # Order by time_in descending
     time_tracks = time_tracks.joins(:room).order(time_in: :desc)
 
-    # For HTML, paginate the filtered query (e.g., 10 per page)
+    # Pagination for HTML
     @time_tracks = time_tracks.page(params[:page]).per(10)
 
     respond_to do |format|
-      format.html  # renders index.html.erb using paginated @time_tracks
+      format.html # renders index.html.erb
       format.pdf do
-        # Pass the full filtered query to the PDF generator
         pdf = TimeTrackPdf.new(time_tracks, params[:start_date], params[:end_date])
         send_data pdf.render,
                   filename: "time_tracks.pdf",
