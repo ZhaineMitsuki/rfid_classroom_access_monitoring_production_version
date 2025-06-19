@@ -28,6 +28,10 @@ Rails.application.configure do
 
   # Enable asset compilation fallback for Render deployment
   config.assets.compile = true
+  
+  # Asset serving configuration
+  config.assets.digest = true
+  config.serve_static_assets = true
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
