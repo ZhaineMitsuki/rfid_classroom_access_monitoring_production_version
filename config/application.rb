@@ -36,6 +36,10 @@ module App
       end
     end
 
+    # Asset pipeline configuration for ERB processing in CSS
+    config.assets.precompile += %w( *.css.erb )
+    config.assets.precompile += %w( TUP_Main.jpg )
+
     # Don't generate system test files.
     config.generators.system_tests = nil
   end
