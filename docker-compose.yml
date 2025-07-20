@@ -32,17 +32,17 @@ services:
       - RAILS_MAX_THREADS=5
       - WEB_CONCURRENCY=2
       - REDIS_URL_CACHING=redis://redis:6379/0
+      - DATABASE_URL=postgresql://postgres:classroom_access_123@db:5432/classroom_access_development
     depends_on:
       - db
       - redis
+    command: bundle exec rails server -b 0.0.0.0 -p 3000
 
-  # Redis
   redis:
     image: redis
     command: ["redis-server", "--appendonly", "yes"]
     ports:
       - "6379:6379"
 
-#Volumes
 volumes:
   bundle-volume:

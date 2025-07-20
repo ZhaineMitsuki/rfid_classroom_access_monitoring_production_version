@@ -1,18 +1,40 @@
 FROM ruby:3.3.7
-RUN bundle config --global frozen 0
 
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    curl -fsSL https://deb.nodesource.com/setup_lts.x | bash && \
-    apt-get update && apt-get install -y python3 nodejs mariadb-client cron yarn --no-install-recommends && \
+# Install system dependencies
+RUN apt-get update -qq && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    libmariadb-dev \
+    libffi-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    libvips \
+    mariadb-client \
+    curl \
+    git \
+    nodejs \
+    python3 \
+    cron \
+    yarn && \
     rm -rf /var/lib/apt/lists/*
 
+# Set workdir
 ENV APP_PATH /usr/src/app
-RUN mkdir -p $APP_PATH
 WORKDIR $APP_PATH
 
-COPY Gemfile* $APP_PATH/
-RUN gem update --system && bundle install
-COPY . $APP_PATH/
+# Install gems
+COPY Gemfile Gemfile.lock ./
+RUN gem update --system && gem install bundler -v 2.5.21
+RUN bundle config set force_ruby_platform true && \
+    bundle config set build.nokogiri --use-system-libraries=false && \
+    bundle install --jobs 4 --retry 3
+
+# Copy application code
+COPY . .
+
+# Precompile assets
+RUN bundle exec rake assets:precompile
 
 EXPOSE 3000
+
+CMD ["bundle", "exec", "rails", "server", "-e", "production", "-b", "0.0.0.0", "-p", "3000"]

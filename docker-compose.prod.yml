@@ -1,4 +1,6 @@
+# docker-compose-prod.yml
 version: '3'
+
 services:
   db:
     image: mariadb:10.5.13
@@ -29,6 +31,9 @@ services:
     depends_on:
       - db
       - redis
+    command: bundle exec rails server -e production -b 0.0.0.0 -p 3000
+    volumes:
+      - public-data:/usr/src/app/public
     networks:
       - app_network
 
@@ -48,16 +53,22 @@ services:
     volumes:
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
       - ./docker/nginx/ssl:/etc/nginx/ssl
-      - ./public:/usr/share/nginx/html
+      - public-data:/usr/share/nginx/html:ro
     depends_on:
       - app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
     networks:
       - app_network
 
 volumes:
   db_data:
   redis_data:
+  public-data:
 
 networks:
   app_network:
-    driver: bridge 
+    driver: bridge
