@@ -1,0 +1,14 @@
+[
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "classroom-monitoring-key"
+  },
+  {
+    "ParameterKey": "DBUsername",
+    "ParameterValue": "postgres"
+  },
+  {
+    "ParameterKey": "DBPassword",
+    "ParameterValue": "MySecurePassword123!"
+  }
+]
