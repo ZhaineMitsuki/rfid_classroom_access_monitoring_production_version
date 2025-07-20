@@ -10,7 +10,7 @@
     <hr>
 
     <div class="sidebar-menu">
-      <h6 class="text-muted fw-bold">Overview</h6>
+      <h6 class="text-white fw-bold">Overview</h6>
       <ul class="nav flex-column">
         <%= link_to admin_root_path, class: "nav-menu-link #{'active' if current_page?(root_path) || current_page?(admin_root_path) || current_page?(dashboard_index_path) }" do %>
           <i class='bx bx-grid-alt me-2'></i> Dashboard
@@ -33,7 +33,7 @@
         <% end %>
       </ul>
 
-      <h6 class="text-muted fw-bold mt-5">Reports</h6>
+      <h6 class="text-white fw-bold mt-5">Reports</h6>
       <ul class="nav flex-column">
         <%= link_to time_track_index_path, class: "nav-menu-link #{'active' if current_page?(time_track_index_path)}" do %>
           <i class='bx bx-time me-2'></i> Daily Logs using RFID
