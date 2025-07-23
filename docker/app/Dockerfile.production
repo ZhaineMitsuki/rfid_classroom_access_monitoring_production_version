@@ -1,0 +1,81 @@
+# Multi-stage build for production EC2 deployment
+# Stage 1: Build dependencies
+FROM ruby:3.3.7-alpine AS builder
+
+# Install build dependencies
+RUN apk add --no-cache \
+    build-base \
+    postgresql-dev \
+    git \
+    nodejs \
+    yarn \
+    tzdata
+
+# Set working directory
+WORKDIR /app
+
+# Copy Gemfile and install gems
+COPY Gemfile Gemfile.lock ./
+RUN bundle config --global frozen 1 && \
+    bundle config set --local deployment 'true' && \
+    bundle config set --local without 'development test' && \
+    bundle install --jobs 4 --retry 3
+
+# Copy package.json and install node modules
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile --production
+
+# Copy application code
+COPY . .
+
+# Precompile assets
+RUN SECRET_KEY_BASE=dummy bundle exec rails assets:precompile RAILS_ENV=production
+
+# Remove unnecessary files
+RUN rm -rf node_modules/.cache \
+    tmp/* \
+    log/* \
+    .git
+
+# Stage 2: Production runtime
+FROM ruby:3.3.7-alpine AS runtime
+
+# Install runtime dependencies
+RUN apk add --no-cache \
+    postgresql-client \
+    tzdata \
+    curl \
+    ca-certificates
+
+# Create app user for security
+RUN addgroup -g 1000 -S appuser && \
+    adduser -u 1000 -S appuser -G appuser
+
+# Set working directory
+WORKDIR /app
+
+# Copy built application from builder stage
+COPY --from=builder --chown=appuser:appuser /usr/local/bundle /usr/local/bundle
+COPY --from=builder --chown=appuser:appuser /app /app
+
+# Create necessary directories
+RUN mkdir -p tmp/pids tmp/sockets log && \
+    chown -R appuser:appuser tmp log
+
+# Switch to non-root user
+USER appuser
+
+# Set environment variables
+ENV RAILS_ENV=production \
+    RAILS_SERVE_STATIC_FILES=true \
+    RAILS_LOG_TO_STDOUT=true
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD curl -f http://localhost:3000/health || exit 1
+
+# Expose port
+EXPOSE 3000
+
+# Start the application
+CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"] 

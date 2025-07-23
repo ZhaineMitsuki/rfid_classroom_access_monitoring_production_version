@@ -17,6 +17,11 @@ Parameters:
     MinLength: 8
     Description: Database master password
 
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64
+    Description: Latest Amazon Linux 2023 AMI ID
+
 Resources:
   VPC:
     Type: AWS::EC2::VPC
@@ -274,7 +279,7 @@ Resources:
       SecurityGroupIds:
         - !Ref WebServerSecurityGroup
       SubnetId: !Ref PublicSubnet1
-      ImageId: ami-047126e50991d067b
+      ImageId: !Ref LatestAmiId
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash

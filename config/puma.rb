@@ -41,3 +41,20 @@ preload_app!
 
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
+
+# Production-specific configuration
+if ENV['RAILS_ENV'] == 'production'
+  # Bind to socket for Nginx in production
+  if ENV['SOCKET_PATH']
+    bind "unix://#{ENV['SOCKET_PATH']}"
+  else
+    # Fallback to port if no socket specified
+    port ENV.fetch("PORT") { 3000 }
+  end
+  
+  # Set up proper logging
+  stdout_redirect 'log/puma.stdout.log', 'log/puma.stderr.log', true
+  
+  # Enable process monitoring
+  activate_control_app 'unix://tmp/sockets/pumactl.sock'
+end

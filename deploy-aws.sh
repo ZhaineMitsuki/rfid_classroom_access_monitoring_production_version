@@ -249,6 +249,7 @@ DATE=\$(date +%Y%m%d_%H%M%S)
 mkdir -p \$BACKUP_DIR
 
 # Database backup
+PGPASSWORD=\$(echo "\$DATABASE_URL" | sed 's/.*:\([^@]*\)@.*/\1/') \
 pg_dump "\$DATABASE_URL" > "\$BACKUP_DIR/db_backup_\$DATE.sql"
 
 # Keep only last 7 days of backups

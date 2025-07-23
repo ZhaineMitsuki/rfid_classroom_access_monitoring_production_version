@@ -3,16 +3,14 @@ version: '3'
 
 services:
   db:
-    image: mariadb:10.5.13
+    image: postgres:15
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-classroom_access_production}
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:/var/lib/postgresql/data
     networks:
       - app_network
 
@@ -26,8 +24,9 @@ services:
       - RAILS_MAX_THREADS=5
       - WEB_CONCURRENCY=2
       - REDIS_URL_CACHING=redis://redis:6379/0
-      - DATABASE_URL=mysql2://${DB_USER}:${DB_PASSWORD}@db:3306/${DB_NAME}
+      - DATABASE_URL=postgresql://${DB_USER:-postgres}:${DB_PASSWORD}@db:5432/${DB_NAME:-classroom_access_production}
       - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - RAILS_SERVE_STATIC_FILES=true
     depends_on:
       - db
       - redis
